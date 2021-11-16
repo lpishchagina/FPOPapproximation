@@ -36,6 +36,7 @@ private:
   unsigned int label_t;
   pRectangle* rect_t;
   std::list<pSphere> disks_t_1;
+  std::list<pSphere> disks_tu;
 
 public:
   Geom_Irandom_Erandom_8(): p(0), label_t(0), rect_t(0){}
@@ -47,6 +48,7 @@ public:
   unsigned int get_p()const;
   unsigned int get_label_t()const;
   std::list<pSphere> get_disks_t_1()const;
+  std::list<pSphere> get_disks_tu()const;
 
   void CleanGeometry();
   bool EmptyGeometry();

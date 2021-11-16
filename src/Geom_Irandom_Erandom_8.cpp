@@ -25,6 +25,8 @@ Geom_Irandom_Erandom_8::Geom_Irandom_Erandom_8(const Geom_Irandom_Erandom_8 & ge
   rect_t = new pRectangle(p);
   disks_t_1.clear();
   disks_t_1 = geom2.disks_t_1;
+  disks_tu.clear();
+  disks_tu = geom2.disks_tu;
 }
 //destructor********************************************************************
 Geom_Irandom_Erandom_8::~Geom_Irandom_Erandom_8(){delete rect_t;}
@@ -36,8 +38,13 @@ unsigned int Geom_Irandom_Erandom_8::get_label_t()const{return label_t;}
 
 std::list<pSphere> Geom_Irandom_Erandom_8::get_disks_t_1()const{return disks_t_1;}
 
+std::list<pSphere> Geom_Irandom_Erandom_8::get_disks_tu()const{return disks_tu;}
+
 //CleanGeometry*****************************************************************
-void Geom_Irandom_Erandom_8::CleanGeometry(){disks_t_1.clear();}
+void Geom_Irandom_Erandom_8::CleanGeometry(){
+  disks_t_1.clear();
+  disks_tu.clear();
+}
 
 //EmptyGeometry*****************************************************************
 bool Geom_Irandom_Erandom_8::EmptyGeometry(){return rect_t->IsEmpty_rect();}
@@ -53,18 +60,23 @@ void Geom_Irandom_Erandom_8::InitialGeometry(unsigned int dim, unsigned int t, c
 void Geom_Irandom_Erandom_8::UpdateGeometry(const pSphere &disk_t){
   //Intersection random
   pRectangle* pcube = new pRectangle(p);
-  int nb_disks = disks_t_1.size();
-  std::list<pSphere>::iterator iter = disks_t_1.end();
+  std::list<pSphere>::iterator iter = disks_tu.begin();
+  int nb_disks = disks_tu.size();
+  int nb_rand;
   if (nb_disks != 0){
-    while((*iter).
+    nb_rand = get_Number(nb_disks);
+    for (int i = 0; i < (nb_rand-1); i ++){  ++iter;}
+    pcube->Intersection_disk(*iter);
   }
   pcube->Intersection_disk(disk_t);
+  disks_tu.push_back(disk_t);
   rect_t = pcube;
   // Exclusion random
   if (!rect_t->IsEmpty_rect()){
     //Rcpp::Rcout<<"nb disks"<<nb_disks<<endl;
+    nb_disks = disks_t_1.size();
     if (nb_disks > 0){
-      int nb_rand = get_Number(nb_disks);
+      nb_rand = get_Number(nb_disks);
       iter = disks_t_1.begin();
       for (int i = 0; i < (nb_rand-1); i ++){  ++iter;}
       if (rect_t->EmptyIntersection(*iter)) {
@@ -73,6 +85,7 @@ void Geom_Irandom_Erandom_8::UpdateGeometry(const pSphere &disk_t){
       else {rect_t->Exclusion_disk(*iter);}
     }
   }
+
 }
 //*****************************************************************************
 int Geom_Irandom_Erandom_8::get_Number(int N){

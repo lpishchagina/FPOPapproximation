@@ -98,7 +98,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = Z.get_means();
     res["globalCost"] = Z.get_globalCost();
   }
-  /*
+
   if (type_approx == 8){
     // test = true;
     OPDp<Geom_Irandom_Erandom_8> Z = OPDp<Geom_Irandom_Erandom_8>(data, penalty);
@@ -106,6 +106,6 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["chpts"] = Z.get_chpts();
     res["means"] = Z.get_means();
     res["globalCost"] = Z.get_globalCost();
-  }*/
+  }
   return res;
 }
