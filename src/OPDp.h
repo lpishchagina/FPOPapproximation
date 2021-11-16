@@ -3,8 +3,10 @@
 #include "Geom_sphere_sphere_1.h"
 #include "Geom_Iall_Eall_2.h"
 #include "Geom_Iall_Eempty_3.h"
-#include "Geom_Iall_Erandom_4.h"
-#include "Geom_last1_Eall_5.h"
+#include "Geom_Iempty_Eall_4.h"
+#include "Geom_Ilast1_Eall_5.h"
+#include "Geom_Ilast1_Erandom_6.h"
+#include "Geom_Iall_Erandom_7.h"
 
 
 
@@ -183,6 +185,8 @@ public:
         if (r2 > 0){
           disk.InitialpSphere(p, cost.get_mu(), sqrt(r2));
           it_geom -> UpdateGeometry(disk);
+          //!!!
+
           if (it_geom -> EmptyGeometry()){it_geom = list_geom.erase(it_geom);--it_geom;}
           else {
             if (test_mode == true){//test: the number of candidates and exclusions

@@ -1,17 +1,21 @@
-#ifndef GEOM_IALL_ERANDOM_4_H
-#define GEOM_IALL_ERANDOM_4_H
+#ifndef GEOM_IRANDOM_ERANDOM_8_H
+#define GEOM_IRANDOM_ERANDOM_8_H
 
 #include <iostream>
 #include <vector>
 #include <list>
 
+#include <cstdlib>
+#include <random>
+#include <ctime>
+
 #include "pRectangle.h"
 #include "Cost.h"
 
 /*
- Class Geom_Iall_Erandom_4
+ Class Geom_Irandom_Erandom_8
  --------------------------------------------------------------------------------
- Description of geometry "Geom_Iall_Erandom_4":
+ Description of geometry "Geom_Irandom_Erandom_8":
  Geometry for FPOP-Algorithm in p-dimension.
 
  Geometry parameters:
@@ -26,7 +30,7 @@
  --------------------------------------------------------------------------------
  */
 
-class Geom_Iall_Erandom_4{
+class Geom_Irandom_Erandom_8{
 private:
   unsigned int p;
   unsigned int label_t;
@@ -34,11 +38,11 @@ private:
   std::list<pSphere> disks_t_1;
 
 public:
-  Geom_Iall_Erandom_4(): p(0), label_t(0), rect_t(0){}
-  Geom_Iall_Erandom_4(unsigned  int dim): p(dim), label_t(0), rect_t(new pRectangle(dim)){}
-  Geom_Iall_Erandom_4(unsigned int dim, unsigned int t): p(dim), label_t(t), rect_t(new pRectangle(dim)){}
-  Geom_Iall_Erandom_4(const Geom_Iall_Erandom_4 & geom2);
-  ~Geom_Iall_Erandom_4();
+  Geom_Irandom_Erandom_8(): p(0), label_t(0), rect_t(0){}
+  Geom_Irandom_Erandom_8(unsigned  int dim): p(dim), label_t(0), rect_t(new pRectangle(dim)){}
+  Geom_Irandom_Erandom_8(unsigned int dim, unsigned int t): p(dim), label_t(t), rect_t(new pRectangle(dim)){}
+  Geom_Irandom_Erandom_8(const Geom_Irandom_Erandom_8 & geom2);
+  ~Geom_Irandom_Erandom_8();
 
   unsigned int get_p()const;
   unsigned int get_label_t()const;
@@ -51,6 +55,6 @@ public:
 
   int get_Number(int N);
 };
-#endif //GEOM_IALL_ERANDOM_4_H
+#endif //GEOM_IRANDOM_ERANDOM_8_H
 //------------------------------------------------------------------------------
 

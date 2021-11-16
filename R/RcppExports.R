@@ -18,9 +18,9 @@
 #' }
 #'
 #' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, chpts = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
-#' data2 =  chpt_rnorm(p = 2, n = 100, chpts = 50, means = matrix(c(0,10,1,10), nrow = 2), noise = 1)
-#'approx_fpop(data2, penalty = 2*log(100), type_approx = 2)
-#'approx_fpop(data = chpt_rnorm(p = 2, n = 100, chpts = 50, means = matrix(c (1,2,7,9), nrow = 2), noise = 1), penalty = 2*log(100), type_approx = 2)
+#' data2 =  chpt_rnorm(p = 2, n = 20, chpts = 10, means = matrix(c(0,10,1,10), nrow = 2), noise = 1)
+#'approx_fpop(data = data2, penalty = 2*log(20), type_approx = 2)
+#'approx_fpop(data = chpt_rnorm(p = 2, n = 20, chpts = 50, means = matrix(c (1,2,7,9), nrow = 2), noise = 1), penalty = 2*log(100), type_approx = 2)
 approx_fpop <- function(data, penalty, type_approx) {
     .Call(`_FPOPapproximation_approx_fpop`, data, penalty, type_approx)
 }

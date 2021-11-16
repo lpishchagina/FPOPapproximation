@@ -47,7 +47,9 @@ void Geom_Iempty_Eall_4::InitialGeometry(unsigned int dim, unsigned int t, const
 //UpdateGeometry****************************************************************
 void Geom_Iempty_Eall_4::UpdateGeometry(const pSphere &disk_t){
   //Intersection
-  rect_t->Intersection_disk(disk_t);
+  pRectangle* pcube = new pRectangle(p);
+  pcube->Intersection_disk(disk_t);
+  rect_t = pcube;
   // Exclusions
   std::list<pSphere>::iterator iter = disks_t_1.begin();
   while(iter != disks_t_1.end() && (!rect_t->IsEmpty_rect())){
