@@ -1,4 +1,4 @@
-#include "OPDp.h"
+#include "FPOP.h"
 
 #include "math.h"
 #include <Rcpp.h>
@@ -23,63 +23,66 @@ using namespace std;
 //' }
 //'
 //' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, chpts = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
-//' data2 =  chpt_rnorm(p = 2, n = 100, chpts = 50, means = matrix(c(0,10,1,10), nrow = 2), noise = 1)
-//'approx_fpop(data2, penalty = 2*log(100), type_approx = 2)
-//'approx_fpop(data = chpt_rnorm(p = 2, n = 100, chpts = 50, means = matrix(c (1,2,7,9), nrow = 2), noise = 1), penalty = 2*log(100), type_approx = 2)
+//' data2 =  chpt_rnorm(p = 2, n = 20, chpts = 10, means = matrix(c(0,1,1,10), nrow = 2), noise = 1)
+//'approx_fpop(data = data2, penalty = 2*log(20), type_approx = 2)
+//'approx_fpop(data = chpt_rnorm(p = 2, n = 20, chpts = 50, means = matrix(c (1,2,7,9), nrow = 2), noise = 1), penalty = 2*log(100), type_approx = 2)
 // [[Rcpp::export]]
 List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
   //----------stop--------------------------------------------------------------
   if(penalty < 0) {throw std::range_error("penalty should be a non-negative number");}
-  if(type_approx < 1 || type_approx > 5)
-  {throw std::range_error("type_approx must be one of: 1, 2,3 or 5");}
+  if(type_approx < 1 || type_approx > 8)
+  {throw std::range_error("type_approx must be one of: 1, 2, 3, 4, 5, 6, 7 or 8.");}
   //----------------------------------------------------------------------------
   List res;
   bool test;
   test = false;
-
   if (type_approx == 1){
     //  test = true;
-    OPDp<Geom_sphere_sphere_1> X = OPDp<Geom_sphere_sphere_1>(data, penalty);
+    FPOP<Candidate_sphere_sphere_1> X = FPOP<Candidate_sphere_sphere_1>(data, penalty);
     X.algoFPOP(data, type_approx, test);
-    res["chpts"] = X.get_chpts();
-    res["means"] = X.get_means();
-    res["globalCost"] = X.get_globalCost();
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
   }
-
   if (type_approx == 2){
     // test = true;
-    OPDp<Geom_Iall_Eall_2> Y = OPDp<Geom_Iall_Eall_2>(data, penalty);
-    Y.algoFPOP(data, type_approx, test);
-    res["chpts"] = Y.get_chpts();
-    res["means"] = Y.get_means();
-    res["globalCost"] = Y.get_globalCost();
+    FPOP<Candidate_Iall_Eall_2> X = FPOP<Candidate_Iall_Eall_2>(data, penalty);
+    X.algoFPOP(data, type_approx, test);
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
   }
-
   if (type_approx == 3){
     // test = true;
-    OPDp<Geom_Iall_Eempty_3> Z = OPDp<Geom_Iall_Eempty_3>(data, penalty);
-    Z.algoFPOP(data, type_approx, test);
-    res["chpts"] = Z.get_chpts();
-    res["means"] = Z.get_means();
-    res["globalCost"] = Z.get_globalCost();
-  }
-
+    FPOP<Candidate_Iall_Eempty_3> X = FPOP<Candidate_Iall_Eempty_3>(data, penalty);
+    X.algoFPOP(data, type_approx, test);
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
+    }
   if (type_approx == 4){
     // test = true;
-    OPDp<Geom_Iall_Erandom_4> Z = OPDp<Geom_Iall_Erandom_4>(data, penalty);
-    Z.algoFPOP(data, type_approx, test);
-    res["chpts"] = Z.get_chpts();
-    res["means"] = Z.get_means();
-    res["globalCost"] = Z.get_globalCost();
+    FPOP<Candidate_Iempty_Eall_4> X = FPOP<Candidate_Iempty_Eall_4>(data, penalty);
+    X.algoFPOP(data, type_approx, test);
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
   }
-
   if (type_approx == 5){
     // test = true;
-    OPDp<Geom_last1_Eall_5> Z = OPDp<Geom_last1_Eall_5>(data, penalty);
-    Z.algoFPOP(data, type_approx, test);
-    res["chpts"] = Z.get_chpts();
-    res["means"] = Z.get_means();
-    res["globalCost"] = Z.get_globalCost();
+    FPOP<Candidate_Ilast_Eall_5> X = FPOP<Candidate_Ilast_Eall_5>(data, penalty);
+    X.algoFPOP(data, type_approx, test);
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
+  }
+  if (type_approx == 7){
+    // test = true;
+    FPOP<Candidate_Iall_Erandom_7> X = FPOP<Candidate_Iall_Erandom_7>(data, penalty);
+    X.algoFPOP(data, type_approx, test);
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
   }
   return res;
 }

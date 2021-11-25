@@ -1,5 +1,5 @@
-#ifndef GEOM_IALL_ERANDOM_4_H
-#define GEOM_IALL_ERANDOM_4_H
+#ifndef GEOM_ILAST1_EALL_5_H
+#define GEOM_ILAST1_EALL_5_H
 
 #include <iostream>
 #include <vector>
@@ -9,9 +9,9 @@
 #include "Cost.h"
 
 /*
- Class Geom_Iall_Erandom_4
+ Class Geom_last1_Eall_5
  --------------------------------------------------------------------------------
- Description of geometry "Geom_Iall_Erandom_4":
+ Description of geometry "Geom_last1_Eall_5":
  Geometry for FPOP-Algorithm in p-dimension.
 
  Geometry parameters:
@@ -26,7 +26,7 @@
  --------------------------------------------------------------------------------
  */
 
-class Geom_Iall_Erandom_4{
+class Geom_Ilast1_Eall_5{
 private:
   unsigned int p;
   unsigned int label_t;
@@ -34,11 +34,11 @@ private:
   std::list<pSphere> disks_t_1;
 
 public:
-  Geom_Iall_Erandom_4(): p(0), label_t(0), rect_t(0){}
-  Geom_Iall_Erandom_4(unsigned  int dim): p(dim), label_t(0), rect_t(new pRectangle(dim)){}
-  Geom_Iall_Erandom_4(unsigned int dim, unsigned int t): p(dim), label_t(t), rect_t(new pRectangle(dim)){}
-  Geom_Iall_Erandom_4(const Geom_Iall_Erandom_4 & geom2);
-  ~Geom_Iall_Erandom_4();
+  Geom_Ilast1_Eall_5(): p(0), label_t(0), rect_t(0){}
+  Geom_Ilast1_Eall_5(unsigned  int dim): p(dim), label_t(0), rect_t(new pRectangle(dim)){}
+  Geom_Ilast1_Eall_5(unsigned int dim, unsigned int t): p(dim), label_t(t), rect_t(new pRectangle(dim)){}
+  Geom_Ilast1_Eall_5(const Geom_Ilast1_Eall_5 & geom2);
+  ~Geom_Ilast1_Eall_5();
 
   unsigned int get_p()const;
   unsigned int get_label_t()const;
@@ -48,9 +48,6 @@ public:
   bool EmptyGeometry();
   void InitialGeometry(unsigned int dim, unsigned int t, const std::list<pSphere> &disks);
   void UpdateGeometry(const pSphere &disk_t);
-
-  int get_Number(int N);
 };
-#endif //GEOM_IALL_ERANDOM_4_H
+#endif //GEOM_ILAST1_EALL_5_H
 //------------------------------------------------------------------------------
-

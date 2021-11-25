@@ -56,6 +56,7 @@ bool pRectangle::IsEmpty_rect(){
   for (unsigned int k = 0; k < p; k++){if (coordinates[k][0] >= coordinates[k][1]){return true;}}
   return false;
 }
+void pRectangle::DoEmpty_rect(){coordinates[1][0] = coordinates[1][1];}
 
 //EmptyIntersection*************************************************************
 bool pRectangle::EmptyIntersection(const pSphere &disk){

@@ -37,6 +37,7 @@ public:
   bool EmptyIntersection(const pSphere &disk);
 
   bool IsEmpty_rect();
+  void DoEmpty_rect();
   void Exclusion_disk(const pSphere &disk);
   void Intersection_disk(const pSphere &disk);
 };

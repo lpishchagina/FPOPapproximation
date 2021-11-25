@@ -1,17 +1,21 @@
-#ifndef GEOM_IALL_EALL_2_H
-#define GEOM_IALL_EALL_2_H
+#ifndef GEOM_ILAST1_ERANDOM_6_H
+#define GEOM_ILAST1_ERANDOM_6_H
 
 #include <iostream>
 #include <vector>
 #include <list>
 
+#include <cstdlib>
+#include <random>
+#include <ctime>
+
 #include "pRectangle.h"
 #include "Cost.h"
 
 /*
- Class Geom_Iall_Eall_2
+ Class Geom_Ilast1_Erandom_6
  --------------------------------------------------------------------------------
- Description of geometry "Geom_Iall_Eall_2":
+ Description of geometry "Geom_Ilast1_Erandom_6":
  Geometry for FPOP-Algorithm in p-dimension.
 
  Geometry parameters:
@@ -26,7 +30,7 @@
  --------------------------------------------------------------------------------
  */
 
-class Geom_Iall_Eall_2{
+class Geom_Ilast1_Erandom_6{
 private:
   unsigned int p;
   unsigned int label_t;
@@ -34,11 +38,11 @@ private:
   std::list<pSphere> disks_t_1;
 
 public:
-  Geom_Iall_Eall_2(): p(0), label_t(0), rect_t(0){}
-  Geom_Iall_Eall_2(unsigned  int dim): p(dim), label_t(0), rect_t(new pRectangle(dim)){}
-  Geom_Iall_Eall_2(unsigned int dim, unsigned int t): p(dim), label_t(t), rect_t(new pRectangle(dim)){}
-  Geom_Iall_Eall_2(const Geom_Iall_Eall_2 & geom2);
-  ~Geom_Iall_Eall_2();
+  Geom_Ilast1_Erandom_6(): p(0), label_t(0), rect_t(0){}
+  Geom_Ilast1_Erandom_6(unsigned  int dim): p(dim), label_t(0), rect_t(new pRectangle(dim)){}
+  Geom_Ilast1_Erandom_6(unsigned int dim, unsigned int t): p(dim), label_t(t), rect_t(new pRectangle(dim)){}
+  Geom_Ilast1_Erandom_6(const Geom_Ilast1_Erandom_6 & geom2);
+  ~Geom_Ilast1_Erandom_6();
 
   unsigned int get_p()const;
   unsigned int get_label_t()const;
@@ -48,6 +52,7 @@ public:
   bool EmptyGeometry();
   void InitialGeometry(unsigned int dim, unsigned int t, const std::list<pSphere> &disks);
   void UpdateGeometry(const pSphere &disk_t);
+  int get_Number(int N);
 };
-#endif //GEOM_IALL_EALL_2_H
+#endif //GEOM_ILAST1_ERANDOM_6_H
 //------------------------------------------------------------------------------
