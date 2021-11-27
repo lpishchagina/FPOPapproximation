@@ -15,8 +15,6 @@ private:
   double* VectOfCosts;
   bool fl_empty;
 
-
-
 public:
   Candidate_sphere_sphere_1(): Dim(0), Tau(0), CumSumData(NULL), VectOfCosts(NULL),  fl_empty(false){}
   Candidate_sphere_sphere_1(unsigned  int dim): Dim(dim), Tau(0), CumSumData(NULL), VectOfCosts(NULL), fl_empty(false){}
@@ -30,7 +28,7 @@ public:
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);
-  void UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_sphere_sphere_1>::reverse_iterator> &vectlinktocands);
+  void UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands);
 };
 #endif //CANDIDATE_SPHERE_SPHERE_1_H
 //------------------------------------------------------------------------------

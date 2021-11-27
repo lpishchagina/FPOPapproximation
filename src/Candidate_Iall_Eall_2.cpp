@@ -12,7 +12,7 @@ using namespace Rcpp;
 using namespace std;
 
 
-Candidate_Iall_Eall_2::Candidate_Iall_Eall_2(const Candidate_Iall_Eall_2 & candidate){
+Candidate_Iall_Eall_2::Candidate_Iall_Eall_2(const Candidate_Iall_Eall_2 & candidate) {
   Dim = candidate.Dim;
   Tau = candidate.Tau;
   Rect= new pRectangle(Dim);
@@ -20,42 +20,57 @@ Candidate_Iall_Eall_2::Candidate_Iall_Eall_2(const Candidate_Iall_Eall_2 & candi
   VectOfCosts = candidate.VectOfCosts;
 }
 
-Candidate_Iall_Eall_2::~Candidate_Iall_Eall_2(){delete Rect;  CumSumData = NULL;  VectOfCosts = NULL;}
+Candidate_Iall_Eall_2::~Candidate_Iall_Eall_2() { delete Rect;  CumSumData = NULL;  VectOfCosts = NULL; }
 
-unsigned int Candidate_Iall_Eall_2::GetTau()const{return Tau;}
+unsigned int Candidate_Iall_Eall_2::GetTau()const { return Tau; }
 
-void Candidate_Iall_Eall_2::CleanOfCandidate(){CumSumData = NULL;  VectOfCosts = NULL;}
+void Candidate_Iall_Eall_2::CleanOfCandidate() { CumSumData = NULL;  VectOfCosts = NULL; }
 
-bool Candidate_Iall_Eall_2::EmptyOfCandidate() {return Rect -> IsEmpty_rect();}
+bool Candidate_Iall_Eall_2::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
 
-void Candidate_Iall_Eall_2::InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts){
+void Candidate_Iall_Eall_2::InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts) {
   Tau = t;
-  CumSumData = cumsumdata;//ATTENTION!!!parce que c'est pointeur sur CumSum et vecteur dans FPOP(c'est le lien!!!)
+  CumSumData = cumsumdata;
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Iall_Eall_2::UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_Iall_Eall_2>::reverse_iterator> &vectlinktocands){
+void Candidate_Iall_Eall_2::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Eall_2>::iterator> &vectlinktocands) {
+  unsigned int N = vectlinktocands.size();
+  unsigned int t = vectlinktocands[N-1] -> GetTau();
+  unsigned int u;
+  double r2;
+  Rect -> Clean_rect();
   Cost cost = Cost(Dim);
-  cost.InitialCost(Dim, Tau, t, CumSumData[Tau], CumSumData[t + 1], VectOfCosts[Tau]);
-  double r2 = (VectOfCosts[t + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
-  if (r2 < 0){ Rect->DoEmpty_rect();}
-  else{
-    pSphere Disk = pSphere(Dim);
-    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-    Rect -> Intersection_disk(Disk);
-
-    unsigned int i =0;
-    while ( (vectlinktocands[i] -> GetTau() != t) && (!Rect->IsEmpty_rect()) ){
-      unsigned int u = vectlinktocands[i] -> GetTau();
-      cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);
-      r2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var())/cost.get_coef();
+  pSphere Disk = pSphere(Dim);
+  //intersection
+  for (unsigned int j = i; j < N; j++) {
+    u = vectlinktocands[j] -> GetTau();
+    cost.InitialCost(Dim, u, t, CumSumData[u], CumSumData[t + 1], VectOfCosts[u]);
+    r2 = (VectOfCosts[t + 1] - VectOfCosts[u] - cost.get_coef_Var())/cost.get_coef();
+    if (r2 < 0) {
+      Rect -> DoEmpty_rect();
+      return;
+    } else {
       Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-      if (Rect->EmptyIntersection(Disk)) {i++;}
-      else {
-        Rect->Exclusion_disk(Disk);
-        i++;
+      Rect -> Intersection_disk(Disk);
+      if (Rect -> IsEmpty_rect()) {
+        return;
+      }
+    }
+  }
+  //exclusion
+  if (N > 1) {
+    for (unsigned int j = 0; j < i; j++) {
+      u = vectlinktocands[j] -> GetTau();
+      cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);
+      r2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var()) / cost.get_coef();
+      Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+      if (!Rect -> EmptyIntersection(Disk)) {
+        Rect -> Exclusion_disk(Disk);
+        if (Rect -> IsEmpty_rect()) {
+          return;
+        }
       }
     }
   }
 }
-

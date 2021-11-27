@@ -33,6 +33,7 @@ public:
 
   double min_ab(double a, double b);
   double max_ab(double a, double b);
+  void Clean_rect();
 
   bool EmptyIntersection(const pSphere &disk);
 

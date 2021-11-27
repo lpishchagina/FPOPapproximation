@@ -40,7 +40,7 @@ void Candidate_sphere_sphere_1::InitialOfCandidate(unsigned int t, double** &cum
   fl_empty = false;
 }
 
-void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_sphere_sphere_1>::reverse_iterator> &vectlinktocands){
+void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands){
   Cost cost = Cost(Dim);
   cost.InitialCost(Dim, Tau, t, CumSumData[Tau], CumSumData[t + 1], VectOfCosts[Tau]);
   double r2 = (VectOfCosts[t + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
@@ -52,22 +52,26 @@ void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int t, std::vector<st
     pSphere Disk_Taut = pSphere(Dim);
     pSphere Disk_ut1 = pSphere(Dim);
     Disk_Taut.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-    unsigned int i =0;
-    double dist;
-    while (vectlinktocands[i] -> GetTau() != t){
-      unsigned int u = vectlinktocands[i] -> GetTau();
-      cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);
-      r2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var())/cost.get_coef();
-      Disk_ut1.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-      dist = Dist(Disk_Taut.get_center(),Disk_ut1.get_center());
+    unsigned int N = vectlinktocands.size();
+    if (N > 1){
+      unsigned int i = 0;
+      double dist;
+      while ((i < (N-1)) && (!fl_empty)){
+        unsigned int u = vectlinktocands[i] -> GetTau();
+        cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);
+        r2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var())/cost.get_coef();
+        Disk_ut1.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
 
-      if (dist < (Disk_ut1.get_radius() + Disk_Taut.get_radius())){
-        if (dist <= (Disk_ut1.get_radius() - Disk_Taut.get_radius())){ //Exclusion is empty
-          fl_empty = true;
-          return;
+        dist = Dist(Disk_Taut.get_center(), Disk_ut1.get_center());
+
+        if (dist < (Disk_ut1.get_radius() + Disk_Taut.get_radius())){
+          if (dist <= (Disk_ut1.get_radius() - Disk_Taut.get_radius())){ //Exclusion is empty
+            fl_empty = true;
+            return;
+          }
         }
+        i++;
       }
-      else { i++;}//Remove disks ou step???
     }
   }
 }

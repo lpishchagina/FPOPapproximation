@@ -8,7 +8,6 @@
 #include "pRectangle.h"
 #include "Cost.h"
 
-
 class Candidate_Iall_Erandom_7{
 private:
   unsigned int Dim;
@@ -18,9 +17,9 @@ private:
   double* VectOfCosts;
 
 public:
-  Candidate_Iall_Erandom_7(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), VectOfCosts(NULL){}
-  Candidate_Iall_Erandom_7(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)), CumSumData(NULL), VectOfCosts(NULL) {}
-  Candidate_Iall_Erandom_7(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), VectOfCosts(NULL){}
+  Candidate_Iall_Erandom_7(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), VectOfCosts(NULL) { }
+  Candidate_Iall_Erandom_7(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)), CumSumData(NULL), VectOfCosts(NULL) { }
+  Candidate_Iall_Erandom_7(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), VectOfCosts(NULL) { }
   Candidate_Iall_Erandom_7(const Candidate_Iall_Erandom_7 & candidate);
   ~Candidate_Iall_Erandom_7();
 
@@ -30,6 +29,6 @@ public:
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);
-  void UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_Iall_Erandom_7>::reverse_iterator> &vectlinktocands);
+  void UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Erandom_7>::iterator> &vectlinktocands);
 };
 #endif // CANDIDATE_IALL_ERANDOM_7_H

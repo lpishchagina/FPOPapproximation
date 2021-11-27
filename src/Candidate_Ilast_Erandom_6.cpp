@@ -1,5 +1,5 @@
 #include "pRectangle.h"
-#include "Candidate_Iall_Erandom_7.h"
+#include "Candidate_Ilast_Erandom_6.h"
 #include "Cost.h"
 #include <stdio.h>
 #include <fstream>
@@ -7,12 +7,10 @@
 #include <math.h>
 #include <Rcpp.h>
 
-
 using namespace Rcpp;
 using namespace std;
 
-
-Candidate_Iall_Erandom_7::Candidate_Iall_Erandom_7(const Candidate_Iall_Erandom_7 & candidate) {
+Candidate_Ilast_Erandom_6::Candidate_Ilast_Erandom_6(const Candidate_Ilast_Erandom_6 & candidate) {
   Dim = candidate.Dim;
   Tau = candidate.Tau;
   Rect = new pRectangle(Dim);
@@ -20,37 +18,42 @@ Candidate_Iall_Erandom_7::Candidate_Iall_Erandom_7(const Candidate_Iall_Erandom_
   VectOfCosts = candidate.VectOfCosts;
 }
 
-Candidate_Iall_Erandom_7::~Candidate_Iall_Erandom_7() { delete Rect;  CumSumData = NULL;  VectOfCosts = NULL; }
+Candidate_Ilast_Erandom_6::~Candidate_Ilast_Erandom_6() { delete Rect;  CumSumData = NULL;  VectOfCosts = NULL; }
 
-unsigned int Candidate_Iall_Erandom_7::GetTau()const { return Tau; }
+unsigned int Candidate_Ilast_Erandom_6::GetTau()const { return Tau; }
 
-int Candidate_Iall_Erandom_7::get_Number(int N) {
+int Candidate_Ilast_Erandom_6::get_Number(int N) {
   system("sleep 0.1");
   srand(time(NULL));
   int res = rand() % N + 1;
   return res;
 }
 
-void Candidate_Iall_Erandom_7::CleanOfCandidate() { CumSumData = NULL;  VectOfCosts = NULL; }
+void Candidate_Ilast_Erandom_6::CleanOfCandidate() { CumSumData = NULL;  VectOfCosts = NULL; }
 
-bool Candidate_Iall_Erandom_7::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
+bool Candidate_Ilast_Erandom_6::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
 
-void Candidate_Iall_Erandom_7::InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts) {
+void Candidate_Ilast_Erandom_6::InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts) {
   Tau = t;
   CumSumData = cumsumdata;
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Iall_Erandom_7::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Erandom_7>::iterator> &vectlinktocands) {
+void Candidate_Ilast_Erandom_6::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Ilast_Erandom_6>::iterator> &vectlinktocands) {
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();
   unsigned int u;
+  unsigned int k = N - 1;
   double r2;
   Rect -> Clean_rect();
   Cost cost = Cost(Dim);
   pSphere Disk = pSphere(Dim);
-  //intersection
-  for (unsigned int j = i; j < N; j++) {
+
+  if ((N > 1) && (i != (N - 1))) {
+    k = N - 2;
+  }
+  //last intersection
+  for (unsigned int j = k; j < N; j++) {
     u = vectlinktocands[j] -> GetTau();
     cost.InitialCost(Dim, u, t, CumSumData[u], CumSumData[t + 1], VectOfCosts[u]);
     r2 = (VectOfCosts[t + 1] - VectOfCosts[u] - cost.get_coef_Var())/cost.get_coef();

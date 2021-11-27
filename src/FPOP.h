@@ -14,7 +14,9 @@
 #include "Candidate_Iall_Eempty_3.h"
 #include "Candidate_Iempty_Eall_4.h"
 #include "Candidate_Ilast_Eall_5.h"
+#include "Candidate_Ilast_Erandom_6.h"
 #include "Candidate_Iall_Erandom_7.h"
+#include "Candidate_Irandom_Erandom_8.h"
 
 
 using namespace Rcpp;
@@ -106,7 +108,7 @@ public:
     Cost cost = Cost(Dim);
 
     std::list<CandidateOfChange> ListOfCandidates;                     // list of active geometries
-    std::vector< typename std::list<CandidateOfChange>::reverse_iterator> VectLinkToCandidates ;//ATTENTION REVERSE ITERATOR new CandOFchance ou non
+    std::vector< typename std::list<CandidateOfChange>::iterator> VectLinkToCandidates ;
 
   //  std::vector<unsigned int> VectTauOfCandidates;                     //list of active disks(t-1)
     double min_val;
@@ -114,11 +116,12 @@ public:
     unsigned int u;
     //Algorithm-----------------------------------------------------------------
     for (unsigned int t = 0; t < N; t++){
+      Rcpp::Rcout << "t ="<< t <<endl;
       cost.InitialCost(Dim, t, t, CumSumData[t], CumSumData[t+1], VectOfCosts[t]);
       min_val = cost.get_min();                       //min value of cost
       tau = t;                                 //best last position
       for (unsigned j = 0; j < Dim; j++){TempMean[j] = cost.get_mu()[j];}
-
+      VectLinkToCandidates.clear();
       //First run: searching min------------------------------------------------
       typename std::list<CandidateOfChange>::reverse_iterator rit_candidate = ListOfCandidates.rbegin();
 
@@ -131,12 +134,13 @@ public:
           min_val = cost.get_min();
           tau = u;
         }
-        VectLinkToCandidates.push_back(rit_candidate);
         ++rit_candidate;
       }//First run: end
+
       //new min, best last changepoint and SegmentMeans--------------------------------
       VectOfCosts[t + 1] = min_val + Penality;
       LastChpt[t] = tau;
+      Rcpp::Rcout<<"last chpt = "<<tau<<endl;
       for (unsigned int j = 0; j < Dim; j++){LastMean[t][j] = TempMean[j];}
 
       //Candidate of Change.Initialisation.----------------------------------------------
@@ -144,19 +148,24 @@ public:
       candidate.InitialOfCandidate(t, CumSumData, VectOfCosts);
 
       ListOfCandidates.push_back(candidate);
-      rit_candidate = ListOfCandidates.rbegin();
 
-      VectLinkToCandidates.push_back(rit_candidate);
+      //generate vector
+      typename std::list<CandidateOfChange>::iterator VecIt = ListOfCandidates.begin();
+      while(VecIt != ListOfCandidates.end()){
+        VectLinkToCandidates.push_back(VecIt);
+        VecIt++;
+      }
+
       //Second run: Update list of geometry-------------------------------------
       unsigned int SizeVectLink = VectLinkToCandidates.size();
-      for (unsigned int i = 0; i< SizeVectLink; i++){VectLinkToCandidates[i]->UpdateOfCandidate(t,VectLinkToCandidates);}
+      for (unsigned int i = 0; i< SizeVectLink; i++){VectLinkToCandidates[i]->UpdateOfCandidate(i,VectLinkToCandidates);}
 
       typename std::list<CandidateOfChange>::iterator it_candidate = ListOfCandidates.begin();
+
       while (it_candidate != ListOfCandidates.end()){
         if (it_candidate -> EmptyOfCandidate()){it_candidate = ListOfCandidates.erase(it_candidate);--it_candidate;}
         ++it_candidate;
       }
-      VectLinkToCandidates.clear();
     }
     //Result vectors------------------------------------------------------------
     std::vector<double> SegmentMeans_chp;

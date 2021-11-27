@@ -79,6 +79,14 @@ bool pRectangle::EmptyIntersection(const pSphere &disk){
   else {return false;}
 }
 
+
+//clean_rect------------------------------------------------------------------
+void pRectangle::Clean_rect(){
+  for (unsigned int i = 0; i < p; i++) {
+    coordinates[i][0] = -INFINITY;
+    coordinates[i][1] = INFINITY;
+  }
+}
 //Intersection_disk*************************************************************
 void pRectangle::Intersection_disk(const pSphere &disk){
   double r = disk.get_radius();
