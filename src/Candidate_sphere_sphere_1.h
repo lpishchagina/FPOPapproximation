@@ -16,14 +16,15 @@ private:
   bool fl_empty;
 
 public:
-  Candidate_sphere_sphere_1(): Dim(0), Tau(0), CumSumData(NULL), VectOfCosts(NULL),  fl_empty(false){}
-  Candidate_sphere_sphere_1(unsigned  int dim): Dim(dim), Tau(0), CumSumData(NULL), VectOfCosts(NULL), fl_empty(false){}
-  Candidate_sphere_sphere_1(unsigned int dim, unsigned int t): Dim(dim), Tau(t), CumSumData(NULL), VectOfCosts(NULL), fl_empty(false){}
+  Candidate_sphere_sphere_1(): Dim(0), Tau(0), CumSumData(NULL), VectOfCosts(NULL),  fl_empty(false) { }
+  Candidate_sphere_sphere_1(unsigned  int dim): Dim(dim), Tau(0), CumSumData(NULL), VectOfCosts(NULL), fl_empty(false) { }
+  Candidate_sphere_sphere_1(unsigned int dim, unsigned int t): Dim(dim), Tau(t), CumSumData(NULL), VectOfCosts(NULL), fl_empty(false) { }
   Candidate_sphere_sphere_1(const Candidate_sphere_sphere_1 & candidate);
   ~Candidate_sphere_sphere_1();
 
   unsigned int GetTau()const;
   double Dist(double* a, double*b);
+  void Clean_fl_empty();
 
   void CleanOfCandidate();
   bool EmptyOfCandidate();

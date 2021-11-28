@@ -49,13 +49,12 @@ void Candidate_Iall_Eempty_3::UpdateOfCandidate(unsigned int i, std::vector<std:
     if (r2 < 0) {
       Rect -> DoEmpty_rect();
       return;
-    } else {
-      Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-      Rect -> Intersection_disk(Disk);
-      if (Rect -> IsEmpty_rect()) {
-        Rcpp::Rcout<< "FPOP"<<endl;
-        return;
-      }
+    }
+    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+    Rect -> Intersection_disk(Disk);
+    if (Rect -> IsEmpty_rect()) {
+      Rcpp::Rcout<< "FPOP"<<endl;
+      return;
     }
   }
 }

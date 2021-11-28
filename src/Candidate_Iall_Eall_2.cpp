@@ -50,12 +50,11 @@ void Candidate_Iall_Eall_2::UpdateOfCandidate(unsigned int i, std::vector<std::l
     if (r2 < 0) {
       Rect -> DoEmpty_rect();
       return;
-    } else {
-      Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-      Rect -> Intersection_disk(Disk);
-      if (Rect -> IsEmpty_rect()) {
-        return;
-      }
+    }
+    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+    Rect -> Intersection_disk(Disk);
+    if (Rect -> IsEmpty_rect()) {
+      return;
     }
   }
   //exclusion

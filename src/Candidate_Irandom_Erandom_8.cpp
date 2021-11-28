@@ -57,14 +57,13 @@ void Candidate_Irandom_Erandom_8::UpdateOfCandidate(unsigned int i, std::vector<
   if (r2 < 0) {
     Rect -> DoEmpty_rect();
     return;
-  } else {
-    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-    Rect -> Intersection_disk(Disk);
-    if (Rect -> IsEmpty_rect()) {
-      return;
-    }
   }
-  if ((N > 1) && (i != (N - 1))) {
+  Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+  Rect -> Intersection_disk(Disk);
+  if (Rect -> IsEmpty_rect()) {
+    return;
+  }
+  if ((i > 0) && (i != N-1)) {
     rand_i = get_Number(N - 1 - i) - 1;
     u = vectlinktocands[i + rand_i] -> GetTau();
     cost.InitialCost(Dim, u, t, CumSumData[u], CumSumData[t + 1], VectOfCosts[u]);

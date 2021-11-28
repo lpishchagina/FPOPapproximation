@@ -17,7 +17,7 @@
 #include "Candidate_Ilast_Erandom_6.h"
 #include "Candidate_Iall_Erandom_7.h"
 #include "Candidate_Irandom_Erandom_8.h"
-
+#include "Candidate_Iempty_Eempty_9.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -167,6 +167,7 @@ public:
         ++it_candidate;
       }
     }
+
     //Result vectors------------------------------------------------------------
     std::vector<double> SegmentMeans_chp;
     unsigned int chp = N;

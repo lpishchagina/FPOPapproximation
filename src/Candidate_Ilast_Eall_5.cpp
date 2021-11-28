@@ -53,16 +53,15 @@ void Candidate_Ilast_Eall_5::UpdateOfCandidate(unsigned int i, std::vector<std::
     if (r2 < 0) {
       Rect -> DoEmpty_rect();
       return;
-    } else {
-      Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-      Rect -> Intersection_disk(Disk);
-      if (Rect -> IsEmpty_rect()) {
-        return;
-      }
+    }
+    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+    Rect -> Intersection_disk(Disk);
+    if (Rect -> IsEmpty_rect()) {
+      return;
     }
   }
   //exclusion
-  if (N > 1) {
+  if (i > 0) {
     for (unsigned int j = 0; j < i; j++) {
       u = vectlinktocands[j] -> GetTau();
       cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);

@@ -32,8 +32,8 @@ using namespace std;
 List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
   //----------stop--------------------------------------------------------------
   if(penalty < 0) {throw std::range_error("penalty should be a non-negative number");}
-  if(type_approx < 1 || type_approx > 8)
-  {throw std::range_error("type_approx must be one of: 1, 2, 3, 4, 5, 6, 7 or 8.");}
+  if(type_approx < 1 || type_approx > 9)
+  {throw std::range_error("type_approx must be one of: 1, 2, 3, 4, 5, 6, 7,8 or 9.");}
   //----------------------------------------------------------------------------
   List res;
   bool test;
@@ -97,6 +97,14 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
   if (type_approx == 8) {
     // test = true;
     FPOP<Candidate_Irandom_Erandom_8> X = FPOP<Candidate_Irandom_Erandom_8>(data, penalty);
+    X.algoFPOP(data, type_approx, test);
+    res["chpts"] = X.GetChanges();
+    res["means"] = X.GetSegmentMeans();
+    res["globalCost"] = X.GetGlobalCost();
+  }
+  if (type_approx == 9) {
+    // test = true;
+    FPOP<Candidate_Iempty_Eempty_9> X = FPOP<Candidate_Iempty_Eempty_9>(data, penalty);
     X.algoFPOP(data, type_approx, test);
     res["chpts"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
