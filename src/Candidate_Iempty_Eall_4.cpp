@@ -61,7 +61,6 @@ void Candidate_Iempty_Eall_4::UpdateOfCandidate(unsigned int i, std::vector<std:
       if (!Rect -> EmptyIntersection(Disk)) {
         Rect -> Exclusion_disk(Disk);
         if (Rect -> IsEmpty_rect()) {
-          Rcpp::Rcout<<"FPOP"<<endl;
           return;
         }
       }

@@ -38,7 +38,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
   List res;
   bool test;
   test = false;
-  if (type_approx == 1){
+  if (type_approx == 1) {
     //  test = true;
     FPOP<Candidate_sphere_sphere_1> X = FPOP<Candidate_sphere_sphere_1>(data, penalty);
     X.algoFPOP(data, type_approx, test);
@@ -46,7 +46,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
   }
-  if (type_approx == 2){
+  if (type_approx == 2) {
     // test = true;
     FPOP<Candidate_Iall_Eall_2> X = FPOP<Candidate_Iall_Eall_2>(data, penalty);
     X.algoFPOP(data, type_approx, test);
@@ -54,15 +54,15 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
   }
-  if (type_approx == 3){
+  if (type_approx == 3) {
     // test = true;
     FPOP<Candidate_Iall_Eempty_3> X = FPOP<Candidate_Iall_Eempty_3>(data, penalty);
     X.algoFPOP(data, type_approx, test);
     res["chpts"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
-    }
-  if (type_approx == 4){
+  }
+  if (type_approx == 4) {
     // test = true;
     FPOP<Candidate_Iempty_Eall_4> X = FPOP<Candidate_Iempty_Eall_4>(data, penalty);
     X.algoFPOP(data, type_approx, test);
@@ -70,7 +70,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
   }
-  if (type_approx == 5){
+  if (type_approx == 5) {
     // test = true;
     FPOP<Candidate_Ilast_Eall_5> X = FPOP<Candidate_Ilast_Eall_5>(data, penalty);
     X.algoFPOP(data, type_approx, test);
@@ -78,7 +78,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
   }
-  if (type_approx == 6){
+  if (type_approx == 6) {
     // test = true;
     FPOP<Candidate_Ilast_Erandom_6> X = FPOP<Candidate_Ilast_Erandom_6>(data, penalty);
     X.algoFPOP(data, type_approx, test);
@@ -86,7 +86,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
   }
-  if (type_approx == 7){
+  if (type_approx == 7) {
     // test = true;
     FPOP<Candidate_Iall_Erandom_7> X = FPOP<Candidate_Iall_Erandom_7>(data, penalty);
     X.algoFPOP(data, type_approx, test);
@@ -94,7 +94,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx) {
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
   }
-  if (type_approx == 8){
+  if (type_approx == 8) {
     // test = true;
     FPOP<Candidate_Irandom_Erandom_8> X = FPOP<Candidate_Irandom_Erandom_8>(data, penalty);
     X.algoFPOP(data, type_approx, test);
