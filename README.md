@@ -48,7 +48,7 @@ The `changes_rnorm` is the generation of data (normal distribution) of dimension
 
 `p`  is the time series dimension.
 
-`chpts` is the changepoint vector that gives the last index of each segment.
+`changes` is the changepoint vector that gives the last index of each segment.
 
 The last element of `changes` is always less than to the length of time series.
 
