@@ -5,11 +5,11 @@
 
 ## Quick Start
 
-`FPOPapproximation` is an R package written in Rcpp/C++ and developed to detection changes using the Functional Pruning Optimal Partitioning method (FPOP) in `p`-variate time series of length `n`. 
+` FPOPapproximation ` is an R package written in Rcpp/C++ and developed to detection changes using the Functional Pruning Optimal Partitioning method (FPOP) in `p`-variate time series of length ` n `. 
 
-The FPOP method consists in analysing the subsets `Zit, i = 1,.., t` at each iteration `t`. The subset `Zit` is formed by the exclusion of the union of `Sjt, j = 1,.., i-1` from the intersection of `Sij, j = i,.., t `. In Gaussian case the sets $S$  are $p$-balls. For dimension `p > 1` the detection of a nonempty intersection and union between `p`-balls is difficult to solve. One way to solve this problem is to approximate the subsets `Zit`.
+The FPOP method consists in analysing the subsets ` Zit, i = 1,.., t ` at each iteration ` t `. The subset ` Zit ` is formed by the exclusion of the union of ` Sjt, j = 1,.., i-1 ` from the intersection of ` Sij, j = i,.., t `. In Gaussian case the sets ` S`  are `p`-balls. For dimension ` p > 1 ` the detection of a nonempty intersection and union between `p`-balls is difficult to solve. One way to solve this problem is to approximate the subsets ` Zit `.
 
-To optimize this method we use the rectangle approximation and the different modification of the intersection and exclusion number.
+To optimize this method we use the rectangle approximation and the different modifications of the number of intersections and exclusions.
 
 Currently, the following parameter combinations (intersection, exclusion) are implemented:
 
@@ -153,8 +153,7 @@ Approx[[2]]
 #$means[[2]]
 #[1]  0.902768 10.120444
 
-
-$globalCost
+#$globalCost
 [1] 224.9253
 
 ```
