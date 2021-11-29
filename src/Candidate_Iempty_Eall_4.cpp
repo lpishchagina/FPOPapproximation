@@ -1,12 +1,4 @@
-#include "pRectangle.h"
 #include "Candidate_Iempty_Eall_4.h"
-#include "Cost.h"
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <Rcpp.h>
-
 
 using namespace Rcpp;
 using namespace std;

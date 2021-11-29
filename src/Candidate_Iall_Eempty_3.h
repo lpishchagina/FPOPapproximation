@@ -2,14 +2,19 @@
 #define CANDIDATE_Iall_Eempty_3_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "pRectangle.h"
 #include "Cost.h"
 
-
-class Candidate_Iall_Eempty_3{
+class Candidate_Iall_Eempty_3 {
 private:
   unsigned int Dim;
   unsigned int Tau;

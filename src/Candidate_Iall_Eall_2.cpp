@@ -1,22 +1,13 @@
-#include "pRectangle.h"
 #include "Candidate_Iall_Eall_2.h"
-#include "Cost.h"
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <Rcpp.h>
-
 
 using namespace Rcpp;
 using namespace std;
-
 
 Candidate_Iall_Eall_2::Candidate_Iall_Eall_2(const Candidate_Iall_Eall_2 & candidate) {
   Dim = candidate.Dim;
   Tau = candidate.Tau;
   Rect= new pRectangle(Dim);
-  CumSumData = candidate.CumSumData;//ATTENTION!!!parce que c'est pointeur sur CumSum et vecteur dans FPOP(c'est le lien!!!)
+  CumSumData = candidate.CumSumData;
   VectOfCosts = candidate.VectOfCosts;
 }
 

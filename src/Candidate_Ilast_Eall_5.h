@@ -2,8 +2,14 @@
 #define CANDIDATE_ILAST_EALL_5_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "pRectangle.h"
 #include "Cost.h"

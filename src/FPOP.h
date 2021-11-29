@@ -1,14 +1,6 @@
 #ifndef FPOP_H
 #define FPOP_H
 
-#include <vector>
-#include <list>
-#include <iterator>
-
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <Rcpp.h>
 #include "Candidate_sphere_sphere_1.h"
 #include "Candidate_Iall_Eall_2.h"
 #include "Candidate_Iall_Eempty_3.h"
@@ -19,11 +11,13 @@
 #include "Candidate_Irandom_Erandom_8.h"
 #include "Candidate_Iempty_Eempty_9.h"
 
+#include <Rcpp.h>
+
 using namespace Rcpp;
 using namespace std;
 
 template <class CandidateOfChange>
-class FPOP{
+class FPOP {
 private:
   unsigned int N;
   unsigned int Dim;
@@ -90,7 +84,7 @@ public:
     return(CumSumData);
   }
 
-  void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool test_mode){
+  void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool test_nb_cands, bool test_nb_exclus){
     double* VectOfCosts = new double[N + 1];                    //GlobalCost = VectOfCosts[n] - Changes.size()*Penality
     double* TempMean = new double[Dim];                         //values of temporary Means
     unsigned int* LastChpt = new unsigned int[N];       //vector of the best last changepoints
@@ -102,7 +96,7 @@ public:
     CumSumData = CalcCumSumData(data);
 
     std::ofstream test_file;                                  // candidates test
-    if (test_mode == true) {
+    if (test_nb_cands == true) {
       test_file.open("test.txt");
     }
     CandidateOfChange candidate = CandidateOfChange(Dim);

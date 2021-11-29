@@ -2,11 +2,16 @@
 #define CANDIDATE_IEMPTY_EEMPTY_9_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "Cost.h"
-
 
 class Candidate_Iempty_Eempty_9{
 private:

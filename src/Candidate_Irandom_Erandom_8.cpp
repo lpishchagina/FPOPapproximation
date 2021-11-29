@@ -1,16 +1,7 @@
-#include "pRectangle.h"
 #include "Candidate_Irandom_Erandom_8.h"
-#include "Cost.h"
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <Rcpp.h>
-
 
 using namespace Rcpp;
 using namespace std;
-
 
 Candidate_Irandom_Erandom_8::Candidate_Irandom_Erandom_8(const Candidate_Irandom_Erandom_8 & candidate) {
   Dim = candidate.Dim;

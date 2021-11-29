@@ -2,14 +2,19 @@
 #define CANDIDATE_IRANDOM_ERANDOM_8_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "pRectangle.h"
 #include "Cost.h"
 
-
-class Candidate_Irandom_Erandom_8{
+class Candidate_Irandom_Erandom_8 {
 private:
   unsigned int Dim;
   unsigned int Tau;

@@ -11,21 +11,24 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // approx_fpop
-List approx_fpop(Rcpp::NumericMatrix data, double penalty, int type_approx);
-RcppExport SEXP _FPOPapproximation_approx_fpop(SEXP dataSEXP, SEXP penaltySEXP, SEXP type_approxSEXP) {
+List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersection, std::string exclusion, bool test_nb_cands, bool test_nb_exclus);
+RcppExport SEXP _FPOPapproximation_approx_fpop(SEXP dataSEXP, SEXP penaltySEXP, SEXP intersectionSEXP, SEXP exclusionSEXP, SEXP test_nb_candsSEXP, SEXP test_nb_exclusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
     Rcpp::traits::input_parameter< double >::type penalty(penaltySEXP);
-    Rcpp::traits::input_parameter< int >::type type_approx(type_approxSEXP);
-    rcpp_result_gen = Rcpp::wrap(approx_fpop(data, penalty, type_approx));
+    Rcpp::traits::input_parameter< std::string >::type intersection(intersectionSEXP);
+    Rcpp::traits::input_parameter< std::string >::type exclusion(exclusionSEXP);
+    Rcpp::traits::input_parameter< bool >::type test_nb_cands(test_nb_candsSEXP);
+    Rcpp::traits::input_parameter< bool >::type test_nb_exclus(test_nb_exclusSEXP);
+    rcpp_result_gen = Rcpp::wrap(approx_fpop(data, penalty, intersection, exclusion, test_nb_cands, test_nb_exclus));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_FPOPapproximation_approx_fpop", (DL_FUNC) &_FPOPapproximation_approx_fpop, 3},
+    {"_FPOPapproximation_approx_fpop", (DL_FUNC) &_FPOPapproximation_approx_fpop, 6},
     {NULL, NULL, 0}
 };
 

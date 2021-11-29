@@ -1,11 +1,11 @@
 Package: FPOPapproximation
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
+Title: FPOPapproximation
 Version: 1.0
 Date: 2021-11-15
-Author: Your Name
-Maintainer: Your Name <your@email.com>
-Description: One paragraph description of what the package does as one or more full sentences.
+Author: Liudmila Pishchagina
+Maintainer: Liudmila Pishchagina <ludmilashabarshova1991@gmail.com>
+Description: FPOP method (using the rectangle approximation for intersection and exclusion of the sets Z_i^t = (\cap_{j=i}^t S_j^t) \backslash (\cup_{j=1}^{t-1} S_j^{t-1}) ) for  the multiple changepoint detection. The following parameter combinations (intersection, exclusion) are implemented: ('sphere', 'sphere'), ('all', 'all'), ('all', 'empty'), ('empty', 'all'), ('last', 'all'), ('last', 'random'), ('all', 'random'), ('random', 'random'), ('empty', 'empty')
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.7)
 LinkingTo: Rcpp

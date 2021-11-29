@@ -2,14 +2,19 @@
 #define CANDIDATE_IALL_EALL_2_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "pRectangle.h"
 #include "Cost.h"
 
-
-class Candidate_Iall_Eall_2{
+class Candidate_Iall_Eall_2 {
 private:
   unsigned int Dim;
   unsigned int Tau;
@@ -25,7 +30,6 @@ public:
   ~Candidate_Iall_Eall_2();
 
   unsigned int GetTau()const;
-
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);

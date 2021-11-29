@@ -2,12 +2,18 @@
 #define CANDIDATE_SPHERE_SPHERE_1_H
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <list>
 #include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "pSphere.h"
 #include "Cost.h"
-class Candidate_sphere_sphere_1{
+
+class Candidate_sphere_sphere_1 {
 private:
   unsigned int Dim;
   unsigned int Tau;
@@ -25,7 +31,6 @@ public:
   unsigned int GetTau()const;
   double Dist(double* a, double*b);
   void Clean_fl_empty();
-
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);

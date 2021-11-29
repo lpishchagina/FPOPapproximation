@@ -1,15 +1,7 @@
-#include "pRectangle.h"
 #include "Candidate_Iall_Eempty_3.h"
-#include "Cost.h"
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <Rcpp.h>
 
 using namespace Rcpp;
 using namespace std;
-
 
 Candidate_Iall_Eempty_3::Candidate_Iall_Eempty_3(const Candidate_Iall_Eempty_3 & candidate) {
   Dim = candidate.Dim;

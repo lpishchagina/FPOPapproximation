@@ -1,12 +1,4 @@
-#include "pSphere.h"
 #include "Candidate_sphere_sphere_1.h"
-#include "Cost.h"
-#include <stdio.h>
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <Rcpp.h>
-
 
 using namespace Rcpp;
 using namespace std;
@@ -47,7 +39,6 @@ void Candidate_sphere_sphere_1::InitialOfCandidate(unsigned int t, double** &cum
 
 void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands) {
   Clean_fl_empty();
-  Rcpp:: Rcout<<endl;
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();
   unsigned int u;

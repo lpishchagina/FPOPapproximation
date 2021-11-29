@@ -3,27 +3,52 @@
 
 #' @title approx_fpop
 #'
-#' @description Detection changepoints using the Functional Pruning Optimal Partitioning method (FPOP) in p-variate time series in a p-variable time series of length n.
-#'
-#' @param data is a matrix of data(p-rows x n-columns).
+#' @description FPOP method (using the rectangle approximation of the sets) for  the multiple changepoint detection.
+#' @param data is a matrix of data (p-rows x n-columns).
 #' @param penalty is a value of penalty (a non-negative real number).
-#' @param type_approx is a value defining the  type of geometry for FPOP-pruning: type=1: ("intersection" of sets), approximation - rectangle; type=2:("intersection" of sets)"minus"("union" of sets), approximation - rectangle; type=3: (last disk)"minus"("union" of sets), approximation - disk.
+#' @param intersection is the type of intersection : 'empty', 'all', 'last', 'random' or 'sphere'.
+#' @param exclusion is the type of intersection : 'empty', 'all', 'random' or 'sphere'.
+#' The following parameter combinations are implemented:
+#' (intersection ='sphere', exclusion ='sphere')
+#' (intersection ='all', exclusion ='all')
+#' (intersection ='all', exclusion ='empty')
+#' (intersection ='empty', exclusion ='all')
+#' (intersection ='last', exclusion ='all')
+#' (intersection ='last', exclusion ='random')
+#' (intersection ='all', exclusion ='random')
+#' (intersection ='random', exclusion ='random')
+#' (intersection ='empty', exclusion ='empty')
+#' @param test_nb_cands is the logical parameter (if test_nb_cands = TRUE, than the file "Nb_cands.txt" contains the number of change candidates for each operation.
+#' @param test_nb_exclus is the logical parameter (if test_nb_exclus = TRUE, than the file "Nb_cands.txt" contains the number of exclusion for change candidates for each operation. (!!Change!!)
 #'
-#' @return a list of  elements  = (changepoints, means, globalCost).
+#' @return a list of  elements  = (changes, means, globalCost).
 #'
 #' \describe{
-#' \item{\code{chpts}}{is the changepoint vector that gives the last index of each segment for the p-variate time series.}
+#' \item{\code{changes}}{is the changepoint vector that gives the last index of each segment for the p-variate time series.}
 #' \item{\code{means}}{is the list of successive means for the p-variate time series.}
 #' \item{\code{globalCost}}{is a number equal to the global cost.}
 #' }
 #'
-#' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, chpts = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
-#' data2 =  chpt_rnorm(p = 2, n = 100, chpts = 50, means = matrix(c(0,1,1,10), nrow = 2), noise = 1)
-#'approx_fpop(data = data2, penalty = 2*2*log(100), type_approx = 2)
-#' data3 =  chpt_rnorm(p = 2, n = 10, chpts = 5, means = matrix(c(0,1,1,10), nrow = 2), noise = 1)
-#'approx_fpop(data = data3, penalty = 2*2*log(10), type_approx = 2)
-#'approx_fpop(data = chpt_rnorm(p = 2, n = 20, chpts = 50, means = matrix(c (1,2,7,9), nrow = 2), noise = 1), penalty = 2*log(100), type_approx = 2)
-approx_fpop <- function(data, penalty, type_approx) {
-    .Call(`_FPOPapproximation_approx_fpop`, data, penalty, type_approx)
+#' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, changes = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
+#' N <- 10
+#' Chpt <-5
+#' Means <-  matrix(c(0,1,1,10), nrow = 2)
+#' Noise <- 1
+#' Dim <- 2
+#' Penality <- 2*Dim*log(N)
+#'time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
+#'Approx <- list()
+#'Approx[[1]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'sphere', exclusion = 'sphere', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[2]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[3]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'empty', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[4]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[5]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[6]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[7]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[8]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'random', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[9]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'empty', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx
+approx_fpop <- function(data, penalty, intersection = "all", exclusion = "all", test_nb_cands = FALSE, test_nb_exclus = FALSE) {
+    .Call(`_FPOPapproximation_approx_fpop`, data, penalty, intersection, exclusion, test_nb_cands, test_nb_exclus)
 }
 
