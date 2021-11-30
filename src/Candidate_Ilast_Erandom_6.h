@@ -30,6 +30,6 @@ public:
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);
-  void UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Ilast_Erandom_6>::iterator> &vectlinktocands);
+  void UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Ilast_Erandom_6>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
 };
 #endif // CANDIDATE_ILAST_ERANDOM_6_H

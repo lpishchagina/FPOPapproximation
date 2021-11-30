@@ -34,7 +34,7 @@ public:
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);
-  void UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands);
+  void UpdateOfCandidate(unsigned int t, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
 };
 #endif //CANDIDATE_SPHERE_SPHERE_1_H
 //------------------------------------------------------------------------------

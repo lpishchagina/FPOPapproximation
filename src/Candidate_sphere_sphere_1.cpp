@@ -37,7 +37,7 @@ void Candidate_sphere_sphere_1::InitialOfCandidate(unsigned int t, double** &cum
   fl_empty = false;
 }
 
-void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands) {
+void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_sphere_sphere_1>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   Clean_fl_empty();
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();

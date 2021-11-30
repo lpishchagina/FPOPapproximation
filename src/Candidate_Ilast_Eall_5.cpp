@@ -25,12 +25,13 @@ void Candidate_Ilast_Eall_5::InitialOfCandidate(unsigned int t, double** &cumsum
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Ilast_Eall_5::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Ilast_Eall_5>::iterator> &vectlinktocands) {
+void Candidate_Ilast_Eall_5::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Ilast_Eall_5>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();
   unsigned int u;
   unsigned int k = N - 1;
   double r2;
+  RealNbExclus = 0;
   Rect -> Clean_rect();
   Cost cost = Cost(Dim);
   pSphere Disk = pSphere(Dim);
@@ -55,18 +56,22 @@ void Candidate_Ilast_Eall_5::UpdateOfCandidate(unsigned int i, std::vector<std::
   }
   //exclusion
   if (i > 0) {
+    unsigned int NbEmptyInter = 0;
     for (unsigned int j = 0; j < i; j++) {
       u = vectlinktocands[j] -> GetTau();
       cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);
       r2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var()) / cost.get_coef();
       Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
-      if (!Rect -> EmptyIntersection(Disk)) {
+      if (Rect -> EmptyIntersection((Disk))) {
+        NbEmptyInter++;
+      } else {
         Rect -> Exclusion_disk(Disk);
         if (Rect -> IsEmpty_rect()) {
+          RealNbExclus = j + 1- NbEmptyInter;
           return;
         }
       }
     }
+    RealNbExclus = i - NbEmptyInter;
   }
 }
-
