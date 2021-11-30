@@ -32,11 +32,12 @@ void Candidate_Iall_Erandom_7::InitialOfCandidate(unsigned int t, double** &cums
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Iall_Erandom_7::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Erandom_7>::iterator> &vectlinktocands) {
+void Candidate_Iall_Erandom_7::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Erandom_7>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();
   unsigned int u;
   double r2;
+  RealNbExclus = 0;
   Rect -> Clean_rect();
   Cost cost = Cost(Dim);
   pSphere Disk = pSphere(Dim);
@@ -64,6 +65,7 @@ void Candidate_Iall_Erandom_7::UpdateOfCandidate(unsigned int i, std::vector<std
     Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
     if (!Rect -> EmptyIntersection(Disk)) {
       Rect -> Exclusion_disk(Disk);
+      RealNbExclus = 1;
     }
   }
 }

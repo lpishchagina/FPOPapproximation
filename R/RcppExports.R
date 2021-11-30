@@ -18,8 +18,8 @@
 #' (intersection ='all', exclusion ='random')
 #' (intersection ='random', exclusion ='random')
 #' (intersection ='empty', exclusion ='empty')
-#' @param test_nb_cands is the logical parameter (if test_nb_cands = TRUE, than the file "Nb_cands.txt" contains the number of change candidates for each operation.
-#' @param test_nb_exclus is the logical parameter (if test_nb_exclus = TRUE, than the file "Nb_cands.txt" contains the number of exclusion for change candidates for each operation. (!!Change!!)
+#' @param NbOfCands is the logical parameter (if NbOfCands = TRUE, than the file "NbOfCands.txt" contains the number of change candidates for each iteration.
+#' @param NbOfExclus is the logical parameter (if NbOfExclus = TRUE, than the file "NbOfExclus.txt" contains the label of candidate and the number of exclusion for change candidates for each iteration.
 #'
 #' @return a list of  elements  = (changes, means, globalCost).
 #'
@@ -30,25 +30,25 @@
 #' }
 #'
 #' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, changes = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
-#' N <- 10
+#' N <- 11
 #' Chpt <-5
-#' Means <-  matrix(c(0,1,1,10), nrow = 2)
+#' Means <-  matrix(c(0,1,1,10time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)), nrow = 2)
 #' Noise <- 1
 #' Dim <- 2
 #' Penality <- 2*Dim*log(N)
-#'time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
+#'
 #'Approx <- list()
-#'Approx[[1]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'sphere', exclusion = 'sphere', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[2]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[3]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'empty', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[4]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[5]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[6]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[7]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[8]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'random', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-#'Approx[[9]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'empty', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+#'Approx[[1]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'sphere', exclusion = 'sphere', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[2]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[3]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[4]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[5]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[6]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[7]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[8]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'random', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
+#'Approx[[9]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
 #'Approx
-approx_fpop <- function(data, penalty, intersection = "all", exclusion = "all", test_nb_cands = FALSE, test_nb_exclus = FALSE) {
-    .Call(`_FPOPapproximation_approx_fpop`, data, penalty, intersection, exclusion, test_nb_cands, test_nb_exclus)
+approx_fpop <- function(data, penalty, intersection = "all", exclusion = "all", NbOfCands = FALSE, NbOfExclus = FALSE) {
+    .Call(`_FPOPapproximation_approx_fpop`, data, penalty, intersection, exclusion, NbOfCands, NbOfExclus)
 }
 

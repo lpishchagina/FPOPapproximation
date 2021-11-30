@@ -21,8 +21,8 @@ using namespace std;
 //' (intersection ='all', exclusion ='random')
 //' (intersection ='random', exclusion ='random')
 //' (intersection ='empty', exclusion ='empty')
-//' @param test_nb_cands is the logical parameter (if test_nb_cands = TRUE, than the file "Nb_cands.txt" contains the number of change candidates for each operation.
-//' @param test_nb_exclus is the logical parameter (if test_nb_exclus = TRUE, than the file "Nb_cands.txt" contains the number of exclusion for change candidates for each operation. (!!Change!!)
+//' @param NbOfCands is the logical parameter (if NbOfCands = TRUE, than the file "NbOfCands.txt" contains the number of change candidates for each iteration.
+//' @param NbOfExclus is the logical parameter (if NbOfExclus = TRUE, than the file "NbOfExclus.txt" contains the label of candidate and the number of exclusion for change candidates for each iteration.
 //'
 //' @return a list of  elements  = (changes, means, globalCost).
 //'
@@ -33,26 +33,26 @@ using namespace std;
 //' }
 //'
 //' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, changes = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
-//' N <- 10
+//' N <- 11
 //' Chpt <-5
-//' Means <-  matrix(c(0,1,1,10), nrow = 2)
+//' Means <-  matrix(c(0,1,1,10time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)), nrow = 2)
 //' Noise <- 1
 //' Dim <- 2
 //' Penality <- 2*Dim*log(N)
-//'time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
+//'
 //'Approx <- list()
-//'Approx[[1]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'sphere', exclusion = 'sphere', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[2]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[3]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'empty', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[4]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[5]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'all', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[6]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[7]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[8]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'random', exclusion = 'random', test_nb_cands = FALSE, test_nb_exclus = FALSE)
-//'Approx[[9]] <-approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'empty', test_nb_cands = FALSE, test_nb_exclus = FALSE)
+//'Approx[[1]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'sphere', exclusion = 'sphere', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[2]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[3]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[4]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[5]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[6]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[7]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[8]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'random', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
+//'Approx[[9]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'empty', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
 //'Approx
 // [[Rcpp::export]]
-List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersection = "all",  std::string exclusion = "all", bool test_nb_cands = false, bool test_nb_exclus = false) {
+List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersection = "all",  std::string exclusion = "all", bool NbOfCands = false, bool NbOfExclus = false) {
   int type_approx = 0;
   // 2 = (Iall, Eall), 3 = (Iall,Eempty), 7 = (Iall,Erandom)
   if (intersection == "all" ) {
@@ -60,15 +60,14 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
       type_approx = 2;
     } else if (exclusion == "empty") {
       type_approx = 3;
-      if (test_nb_exclus) {
-        test_nb_exclus = false;
-        Rcpp::Rcout << "The test of the exclusion number  is not available for the combination ('all', 'empty')."<< endl;
+      if (NbOfExclus) {
+        NbOfExclus = false;
+        Rcpp::Rcout << "The exclusion number  is 0 for the combination ('all', 'empty')."<< endl;
       }
     } else if (exclusion == "random") {
       type_approx = 7;
-      if (test_nb_exclus) {
-        test_nb_exclus = false;
-        Rcpp::Rcout << "The exclusion number for each change candidate is 1 for the combination ('all', 'random')."<< endl;
+      if (NbOfExclus) {
+        Rcpp::Rcout << "The maximum number of exclusion for each change candidate is 1 for the combination ('all', 'random')."<< endl;
       }
     }
   }
@@ -78,9 +77,9 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
       type_approx = 4;
     } else if (exclusion == "empty") {
       type_approx = 9;
-      if (test_nb_exclus) {
-        test_nb_exclus = false;
-        Rcpp::Rcout << "The test of the exclusion number  is not available for the combination ('empty', 'empty')."<< endl;
+      if (NbOfExclus) {
+        NbOfExclus = false;
+        Rcpp::Rcout << "The exclusion number is 0 for the combination ('empty', 'empty')."<< endl;
       }
     }
   }
@@ -90,18 +89,17 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
       type_approx = 5;
     } else if (exclusion == "random") {
       type_approx = 6;
-      if (test_nb_exclus) {
-        test_nb_exclus = false;
-        Rcpp::Rcout << "The exclusion number for each change candidate  is 1 for the combination ('last', 'random')."<< endl;
+      if (NbOfExclus) {
+        NbOfExclus = false;
+        Rcpp::Rcout << "The maximum number of exclusions for each change candidate  is 1 for the combination ('last', 'random')."<< endl;
       }
     }
   }
   //8 = (Irandom, Erandom)
   if ((intersection == "random") && (exclusion == "random"))  {
     type_approx = 8;
-    if (test_nb_exclus) {
-      test_nb_exclus = false;
-      Rcpp::Rcout << "The exclusion number for each change candidate  is 1 for the combination ('random', 'random')."<< endl;
+    if (NbOfExclus) {
+      Rcpp::Rcout << "The maximum number of exclusions for each change candidate  is 1 for the combination ('random', 'random')."<< endl;
     }
   }
   if ((intersection == "sphere") && (exclusion == "sphere"))  {
@@ -113,12 +111,9 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   {throw std::range_error("This combination of parameters 'intersection' and 'exclusion' is not available. ");}
   //----------------------------------------------------------------------------
   List res;
-  bool test;
-  test = false;
   if (type_approx == 1) {
-    //  test = true;
     FPOP<Candidate_sphere_sphere_1> X = FPOP<Candidate_sphere_sphere_1>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -126,7 +121,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 2) {
     // test = true;
     FPOP<Candidate_Iall_Eall_2> X = FPOP<Candidate_Iall_Eall_2>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -134,7 +129,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 3) {
     // test = true;
     FPOP<Candidate_Iall_Eempty_3> X = FPOP<Candidate_Iall_Eempty_3>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -142,7 +137,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 4) {
     // test = true;
     FPOP<Candidate_Iempty_Eall_4> X = FPOP<Candidate_Iempty_Eall_4>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -150,7 +145,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 5) {
     // test = true;
     FPOP<Candidate_Ilast_Eall_5> X = FPOP<Candidate_Ilast_Eall_5>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -158,7 +153,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 6) {
     // test = true;
     FPOP<Candidate_Ilast_Erandom_6> X = FPOP<Candidate_Ilast_Erandom_6>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -166,7 +161,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 7) {
     // test = true;
     FPOP<Candidate_Iall_Erandom_7> X = FPOP<Candidate_Iall_Erandom_7>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -174,7 +169,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 8) {
     // test = true;
     FPOP<Candidate_Irandom_Erandom_8> X = FPOP<Candidate_Irandom_Erandom_8>(data, penalty);
-    X.algoFPOP(data, type_approx,test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx,NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();
@@ -182,7 +177,7 @@ List approx_fpop(Rcpp::NumericMatrix data, double penalty, std::string intersect
   if (type_approx == 9) {
     // test = true;
     FPOP<Candidate_Iempty_Eempty_9> X = FPOP<Candidate_Iempty_Eempty_9>(data, penalty);
-    X.algoFPOP(data, type_approx, test_nb_cands, test_nb_exclus);
+    X.algoFPOP(data, type_approx, NbOfCands, NbOfExclus);
     res["changes"] = X.GetChanges();
     res["means"] = X.GetSegmentMeans();
     res["globalCost"] = X.GetGlobalCost();

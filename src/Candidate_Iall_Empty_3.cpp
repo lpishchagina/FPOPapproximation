@@ -25,7 +25,7 @@ void Candidate_Iall_Eempty_3::InitialOfCandidate(unsigned int t, double** &cumsu
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Iall_Eempty_3::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Eempty_3>::iterator> &vectlinktocands) {
+void Candidate_Iall_Eempty_3::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Eempty_3>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();
   unsigned int u;

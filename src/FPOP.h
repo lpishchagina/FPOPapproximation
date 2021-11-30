@@ -78,13 +78,24 @@ public:
     for (unsigned int j = 1; j < (N + 1); j++) {
       for (unsigned int k = 0; k < Dim; k++) {
         CumSumData[j][k] = CumSumData[j - 1][k] + data(k, j-1);
-        CumSumData[j][Dim + k] = CumSumData[j - 1][Dim + k] + data(k, j-1)*data(k, j-1);
+        CumSumData[j][Dim + k] = CumSumData[j - 1][Dim + k] + data(k, j-1) * data(k, j - 1);
       }
     }
     return(CumSumData);
   }
 
-  void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool test_nb_cands, bool test_nb_exclus){
+  void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool NbOfCands, bool NbOfExclus){
+    //file initialisation for tests
+    std::ofstream FileNbCands;
+    std::ofstream FileNbExclus;
+    unsigned int RealNbExclus = 0;
+    if (NbOfCands == true) {
+      FileNbCands.open("NbOfCands.txt", ios_base::trunc);
+    }
+    if (NbOfExclus == true) {
+      FileNbExclus.open("NbOfExclus.txt", ios_base::trunc);
+    }
+
     double* VectOfCosts = new double[N + 1];                    //GlobalCost = VectOfCosts[n] - Changes.size()*Penality
     double* TempMean = new double[Dim];                         //values of temporary Means
     unsigned int* LastChpt = new unsigned int[N];       //vector of the best last changepoints
@@ -94,11 +105,6 @@ public:
     }
     VectOfCosts[0] = 0;
     CumSumData = CalcCumSumData(data);
-
-    std::ofstream test_file;                                  // candidates test
-    if (test_nb_cands == true) {
-      test_file.open("test.txt");
-    }
     CandidateOfChange candidate = CandidateOfChange(Dim);
     pSphere disk = pSphere(Dim);
     Cost cost = Cost(Dim);
@@ -141,17 +147,25 @@ public:
       candidate.CleanOfCandidate();                  //if necessary, we clear the memory
       candidate.InitialOfCandidate(t, CumSumData, VectOfCosts);
       ListOfCandidates.push_back(candidate);
-      //generate vector
+      //Generate vector
       typename std::list<CandidateOfChange>::iterator VecIt = ListOfCandidates.begin();
       while (VecIt != ListOfCandidates.end()) {
         VectLinkToCandidates.push_back(VecIt);
         VecIt++;
       }
-      //Second run: Update list of geometry-------------------------------------
+      //Second run:
+      //Update ListOfCandidates-------------------------------------
       unsigned int SizeVectLink = VectLinkToCandidates.size();
       for (unsigned int i = 0; i< SizeVectLink; i++) {
-        VectLinkToCandidates[i] -> UpdateOfCandidate(i,VectLinkToCandidates);
+        VectLinkToCandidates[i] -> UpdateOfCandidate(i,VectLinkToCandidates, RealNbExclus);
+        if (NbOfExclus) {
+          FileNbExclus << VectLinkToCandidates[i] -> GetTau() << " " << RealNbExclus << " ";
+        }
       }
+      if (NbOfExclus) {
+        FileNbExclus << "\n";
+      }
+      //Remove empty candidates
       typename std::list<CandidateOfChange>::iterator it_candidate = ListOfCandidates.begin();
       while (it_candidate != ListOfCandidates.end()) {
         if (it_candidate -> EmptyOfCandidate()) {
@@ -160,8 +174,19 @@ public:
         }
         ++it_candidate;
       }
+      //fixe nb_cands
+      if (NbOfCands) {
+        FileNbCands << VectLinkToCandidates.size() << " ";
+      }
     }
-
+    //close file
+    if (NbOfCands) {
+      FileNbCands << "\n";
+      FileNbCands.close();
+    }
+    if (NbOfExclus) {
+      FileNbExclus.close();
+    }
     //Result vectors------------------------------------------------------------
     std::vector<double> SegmentMeans_chp;
     unsigned int chp = N;

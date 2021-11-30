@@ -25,7 +25,7 @@ void Candidate_Iempty_Eempty_9::Clean_fl_empty() { fl_empty = false;}
 
 void Candidate_Iempty_Eempty_9::CleanOfCandidate() { CumSumData = NULL;  VectOfCosts = NULL; }
 
-bool Candidate_Iempty_Eempty_9::EmptyOfCandidate() { fl_empty = false;}
+bool Candidate_Iempty_Eempty_9::EmptyOfCandidate() { return fl_empty; }
 
 void Candidate_Iempty_Eempty_9::InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts) {
   Tau = t;
@@ -34,7 +34,7 @@ void Candidate_Iempty_Eempty_9::InitialOfCandidate(unsigned int t, double** &cum
   fl_empty = false;
 }
 
-void Candidate_Iempty_Eempty_9::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iempty_Eempty_9>::iterator> &vectlinktocands) {
+void Candidate_Iempty_Eempty_9::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iempty_Eempty_9>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   Clean_fl_empty();
   unsigned int t = vectlinktocands[vectlinktocands.size()-1] -> GetTau();
   Cost cost = Cost(Dim);
