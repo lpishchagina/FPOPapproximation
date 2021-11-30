@@ -18,8 +18,8 @@
 #' Noise <- 1
 #' Dim <- 2
 #' Penality <- 2*Dim*log(N)
-#'time_series1 <- chpt_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
-#' time_series2 <- chpt_rnorm(p = Dim, n = N, changes = NULL, means = matrix(0, ncol = 1, nrow = Dim), noise = Noise)
+#'time_series1 <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
+#' time_series2 <- changes_rnorm(p = Dim, n = N, changes = NULL, means = matrix(0, ncol = 1, nrow = Dim), noise = Noise)
 
 changes_rnorm <- function(p, n, changes = NULL, means = matrix(0, ncol = 1, nrow = p), noise = 1) {
   #---stop---#

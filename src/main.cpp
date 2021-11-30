@@ -39,7 +39,7 @@ using namespace std;
 //' Noise <- 1
 //' Dim <- 2
 //' Penality <- 2*Dim*log(N)
-//'
+//' time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
 //'Approx <- list()
 //'Approx[[1]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'sphere', exclusion = 'sphere', NbOfCands = FALSE, NbOfExclus = FALSE)
 //'Approx[[2]] <- approx_fpop(data = time_series, penalty = Penality, intersection = 'all', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
