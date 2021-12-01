@@ -35,7 +35,7 @@ using namespace std;
 //' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, changes = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
 //' N <- 11
 //' Chpt <-5
-//' Means <-  matrix(c(0,1,1,10time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)), nrow = 2)
+//' Means <-  matrix(c(0,1,1,10), nrow = 2)
 //' Noise <- 1
 //' Dim <- 2
 //' Penality <- 2*Dim*log(N)
