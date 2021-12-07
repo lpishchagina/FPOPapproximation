@@ -7,7 +7,7 @@
 #############################################################################################
 #############################################################################################
 
-install.packages("RColorBrewer")
+#install.packages("RColorBrewer")
 
 devtools::install_github("lpishchagina/FPOPapproximation")
 
@@ -24,7 +24,7 @@ Combination <-c("(I ='sphere', E ='sphere') ","(I ='all', E ='all')"
                 , "(I ='last', E ='all')", "(I ='last', E ='random')"
                 , "(I ='all', E ='random')", "(I ='random', E ='random')"
                 , "(I ='empty', E ='empty')")
-N <- c(100)  # c(100, 1000, 10000)
+N <- c(10)  # c(100, 1000, 10000)
 Dim <- c(2)#c(2, 3, 4, 5, 7, 10, 15)
 Noise <- 1
 
@@ -38,6 +38,7 @@ for (pN in N){
     MatrMeanNbCands = matrix(0, nrow = pN, ncol = length(Intersection))
     ResMeanFile = paste('MeanNbOfCands all combinations N =', N, 'Dim =', pDim, '.txt' )
     for (i in 1 : length((Intersection))) {
+      print(i)
       ResFile = paste('NbOfCands N =', pN, 'I =', Intersection[i], 'E =', Exclusion[i], 'Dim =', pDim, '.txt' )
       MatrNbCands = matrix(0, nrow = pN, ncol = NbRep)
       for (pNbRep in 1 : NbRep) {

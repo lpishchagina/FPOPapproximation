@@ -12,6 +12,7 @@
 #include "Candidate_Iempty_Eempty_9.h"
 
 #include <Rcpp.h>
+#include "math.h"
 
 using namespace Rcpp;
 using namespace std;
@@ -23,9 +24,13 @@ private:
   unsigned int Dim;
   double Penality;
   double** CumSumData;
+  double** CumSumData2;
   std::vector <unsigned int> Changes;
   std::vector <std::vector <double>> SegmentMeans;
-  double GlobalCost;
+  double UnpenalizedCost;
+
+  double* VectOfCosts;                    //UnpenalizedCost = VectOfCosts[n] - Changes.size()*Penality
+  unsigned int* LastChpt;       //vector of the best last changepoints
 
 public:
   FPOP<CandidateOfChange>() { }
@@ -34,9 +39,15 @@ public:
     Dim  = (unsigned int)data.nrow();
     N = (unsigned int)data.ncol();
     Penality = penality;
+
+    VectOfCosts = new double[N + 1];
+    LastChpt = new unsigned int[N];
+
     CumSumData = new double*[N + 1];
+    CumSumData2 = new double*[N + 1];
     for (unsigned int i = 0; i < (N + 1); i++) {
-      CumSumData[i] = new double[(2*Dim)];
+      CumSumData[i] = new double[Dim];
+      CumSumData2[i] = new double[Dim];
     }
   }
 
@@ -46,42 +57,76 @@ public:
     Penality = candidate.Penality;
     Changes = candidate.Changes;
     SegmentMeans = candidate.SegmentMeans;
-    GlobalCost = candidate.GlobalCost;
+    UnpenalizedCost = candidate.UnpenalizedCost;
+
+    VectOfCosts = new double[N + 1];
+    LastChpt = new unsigned int[N];
 
     CumSumData = new double*[N + 1];
+    CumSumData2 = new double*[N + 1];
+
     for (unsigned int i = 0; i < N + 1; i++) {
-      CumSumData[i] = new double[(2*Dim)];
+
+      VectOfCosts[i] = candidate.VectOfCosts[i];
+
+      CumSumData[i] = new double[Dim];
+      CumSumData2[i] = new double[Dim];
       for (unsigned int k = 0; k < Dim; k++) {
         CumSumData[i][k] = candidate.CumSumData[i][k];
-        CumSumData[i][Dim + k] = candidate.CumSumData[i][Dim + k];
+        CumSumData2[i][k] = candidate.CumSumData2[i][k];
       }
+    }
+    for (unsigned int i = 0; i < N; i++) {
+      LastChpt[i] = candidate.LastChpt[i];
     }
   }
 
   ~FPOP<CandidateOfChange>() {
-    for (unsigned int i = 0; i < N + 1; i++) { delete(CumSumData[i]); }
+    for (unsigned int i = 0; i < N + 1; i++) {
+      delete(CumSumData[i]);
+      delete(CumSumData2[i]);
+    }
     delete [] CumSumData;
+    delete [] CumSumData2;
+    delete [] VectOfCosts;
+    delete [] LastChpt;
     CumSumData = NULL;
+    CumSumData2 = NULL;
+    VectOfCosts = NULL;
+    LastChpt = NULL;
   }
 
   std::vector <unsigned int> GetChanges() const { return Changes; }
   std::vector <std::vector <double>> GetSegmentMeans() const { return SegmentMeans; }
-  double GetGlobalCost() const { return GlobalCost; }
+  double GetUnpenalizedCost() const { return UnpenalizedCost; }
   unsigned int GetN() const { return N; }
   unsigned int GetDim() const { return Dim; }
   double GetPenality() const { return Penality; }
+  double* GetVectOfCosts() const { return VectOfCosts; }
+  unsigned int* GetLastChpt() const { return LastChpt; }
 
   double** CalcCumSumData(Rcpp::NumericMatrix data) {
     for (unsigned int k = 0; k < Dim; k++) {
-      CumSumData[0][k] = 0; CumSumData[0][Dim + k] = 0;
+      CumSumData[0][k] = 0;
     }
     for (unsigned int j = 1; j < (N + 1); j++) {
       for (unsigned int k = 0; k < Dim; k++) {
         CumSumData[j][k] = CumSumData[j - 1][k] + data(k, j-1);
-        CumSumData[j][Dim + k] = CumSumData[j - 1][Dim + k] + data(k, j-1) * data(k, j - 1);
       }
     }
     return(CumSumData);
+  }
+
+  double** CalcCumSumData2(Rcpp::NumericMatrix data) {
+    for (unsigned int k = 0; k < Dim; k++) {
+      CumSumData2[0][k] = 0;
+    }
+    for (unsigned int j = 1; j < (N + 1); j++) {
+      for (unsigned int k = 0; k < Dim; k++) {
+        CumSumData2[j][k] = CumSumData2[j - 1][k] + data(k, j-1) * data(k, j - 1);
+      }
+    }
+    return(CumSumData2);
   }
 
   void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool NbOfCands, bool NbOfExclus){
@@ -96,15 +141,9 @@ public:
       FileNbExclus.open("NbOfExclus.txt", ios_base::trunc);
     }
 
-    double* VectOfCosts = new double[N + 1];                    //GlobalCost = VectOfCosts[n] - Changes.size()*Penality
-    double* TempMean = new double[Dim];                         //values of temporary Means
-    unsigned int* LastChpt = new unsigned int[N];       //vector of the best last changepoints
-    double** LastMean = new double*[N];                 //matrix (nxp) of SegmentMeans for the best last changepoints
-    for(unsigned int i = 0; i < N; i++) {
-      LastMean[i] = new double[Dim];
-    }
     VectOfCosts[0] = 0;
     CumSumData = CalcCumSumData(data);
+    CumSumData2 = CalcCumSumData2(data);
     CandidateOfChange candidate = CandidateOfChange(Dim);
     pSphere disk = pSphere(Dim);
     Cost cost = Cost(Dim);
@@ -115,46 +154,40 @@ public:
     unsigned int u;
     //Algorithm-----------------------------------------------------------------
     for (unsigned int t = 0; t < N; t++) {
-      cost.InitialCost(Dim, t, t, CumSumData[t], CumSumData[t+1], VectOfCosts[t]);
+      Rcpp::Rcout<<"t = "<<t<<endl;
+
+      cost.InitialCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts); // Guillem : a link to CumSumData ? check in cost object (cost.h)
       min_val = cost.get_min();                       //min value of cost
       tau = t;                                 //best last position
-      for (unsigned j = 0; j < Dim; j++) {
-        TempMean[j] = cost.get_mu()[j];
-      }
-      VectLinkToCandidates.clear();
-      //First run: searching min------------------------------------------------
+      //First run: searching min
       typename std::list<CandidateOfChange>::reverse_iterator rit_candidate = ListOfCandidates.rbegin();
       while (rit_candidate != ListOfCandidates.rend()) {
         u = rit_candidate -> GetTau();
-        // Searching: min
-        cost.InitialCost(Dim, u, t, CumSumData[u], CumSumData[t + 1], VectOfCosts[u]);
+        cost.InitialCost(Dim, u, t, CumSumData, CumSumData2, VectOfCosts);
         if (min_val >= cost.get_min()) {
-          for (unsigned j = 0; j < Dim; j++) {
-            TempMean[j] = cost.get_mu()[j];
-          }
           min_val = cost.get_min();
           tau = u;
         }
         ++rit_candidate;
-      }//First run: end
+      }
       //new min, best last changepoint and SegmentMeans--------------------------------
       VectOfCosts[t + 1] = min_val + Penality;
+      Rcpp::Rcout<< " VectOfCosts[t + 1] ="<< VectOfCosts[t + 1]<<endl;
       LastChpt[t] = tau;
-      for (unsigned int j = 0; j < Dim; j++) {
-        LastMean[t][j] = TempMean[j];
-      }
-      //Candidate of Change.Initialisation.----------------------------------------------
-      candidate.CleanOfCandidate();                  //if necessary, we clear the memory
-      candidate.InitialOfCandidate(t, CumSumData, VectOfCosts);
+      Rcpp::Rcout<< " LastChpt[t] ="<< LastChpt[t]<<endl;
+      //Candidate of Change.Initialisation.
+      candidate.InitialOfCandidate(t, CumSumData, CumSumData2, VectOfCosts);
       ListOfCandidates.push_back(candidate);
-      //Generate vector
+
+      //Generate vector of link
+      VectLinkToCandidates.clear();
       typename std::list<CandidateOfChange>::iterator VecIt = ListOfCandidates.begin();
       while (VecIt != ListOfCandidates.end()) {
         VectLinkToCandidates.push_back(VecIt);
         VecIt++;
       }
       //Second run:
-      //Update ListOfCandidates-------------------------------------
+      //Update ListOfCandidates
       unsigned int SizeVectLink = VectLinkToCandidates.size();
       for (unsigned int i = 0; i< SizeVectLink; i++) {
         VectLinkToCandidates[i] -> UpdateOfCandidate(i,VectLinkToCandidates, RealNbExclus);
@@ -187,34 +220,34 @@ public:
     if (NbOfExclus) {
       FileNbExclus.close();
     }
-    //Result vectors------------------------------------------------------------
-    std::vector<double> SegmentMeans_chp;
+    //Result
+    //vector of Changes
     unsigned int chp = N;
     while (chp > 0) {
       Changes.push_back(chp);
-      SegmentMeans_chp.clear();
-      for (unsigned int i = 0; i < Dim; i++) {
-        SegmentMeans_chp.push_back(LastMean[chp-1][i]);
-      }
-      SegmentMeans.push_back(SegmentMeans_chp);
       chp = LastChpt[chp-1];
     }
-    reverse(Changes.begin(), Changes.end());
-    GlobalCost = VectOfCosts[N] - Penality * (Changes.size()-1);//verifier!!!
-    Changes.pop_back();
-    reverse(SegmentMeans.begin(), SegmentMeans.end());
-    //memory--------------------------------------------------------------------
-    for (unsigned int i = 0; i < N; i++) {
-      delete(LastMean[i]);
+    Changes.push_back(0);
+    /*
+    //calculation of the segment means
+
+    std::vector<double> MeanOneSegment;
+    Rcpp::Rcout<<"size of changes ="<< Changes.size()<<endl;
+    for (unsigned int chpt_i = 0; chpt_i < (Changes.size() - 2); chpt_i++) {
+      MeanOneSegment.clear();
+      unsigned int coef = Changes[chpt_i] - Changes[chpt_i] + 1;
+      for (unsigned int k = 0; k < Dim; k++) {
+        MeanOneSegment.push_back( (CumSumData[Changes[chpt_i] + 1][k] - CumSumData[Changes[chpt_i + 1]][k]) / coef );
+      }
+      SegmentMeans.push_back(MeanOneSegment);
     }
-    delete [] LastMean;
-    delete [] LastChpt;
-    delete [] TempMean;
-    delete [] VectOfCosts;
-    VectOfCosts = NULL;
-    LastMean = NULL;
-    LastChpt = NULL;
-    TempMean = NULL;
+    reverse(SegmentMeans.begin(), SegmentMeans.end());
+*/
+    Changes.pop_back();//remove 0
+    reverse(Changes.begin(), Changes.end());
+    Changes.pop_back();//remove N
+
+    UnpenalizedCost = VectOfCosts[N] - Penality * (Changes.size());
   }
 };
 #endif //FPOP_H

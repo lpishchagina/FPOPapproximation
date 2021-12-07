@@ -21,18 +21,18 @@
 #' @param NbOfCands is the logical parameter (if NbOfCands = TRUE, than the file "NbOfCands.txt" contains the number of change candidates for each iteration.
 #' @param NbOfExclus is the logical parameter (if NbOfExclus = TRUE, than the file "NbOfExclus.txt" contains the label of candidate and the number of exclusion for change candidates for each iteration.
 #'
-#' @return a list of  elements  = (changes, means, globalCost).
+#' @return a list of  elements  = (changes, means, UnpenalizedCost).
 #'
 #' \describe{
 #' \item{\code{changes}}{is the changepoint vector that gives the last index of each segment for the p-variate time series.}
 #' \item{\code{means}}{is the list of successive means for the p-variate time series.}
-#' \item{\code{globalCost}}{is a number equal to the global cost.}
+#' \item{\code{UnpenalizedCost}}{is a number equal to the global cost.}
 #' }
 #'
 #' @examples approx_fpop(data = chpt_rnorm(p = 3, n = 100, changes = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
 #' N <- 11
 #' Chpt <-5
-#' Means <-  matrix(c(0,1,1,10time_series <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)), nrow = 2)
+#' Means <-  matrix(c(0,1,1,10), nrow = 2)
 #' Noise <- 1
 #' Dim <- 2
 #' Penality <- 2*Dim*log(N)

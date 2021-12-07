@@ -7,10 +7,11 @@ Candidate_sphere_sphere_1::Candidate_sphere_sphere_1(const Candidate_sphere_sphe
   Dim = candidate.Dim;
   Tau = candidate.Tau;
   CumSumData = candidate.CumSumData;
+  CumSumData2 = candidate.CumSumData2;
   VectOfCosts = candidate.VectOfCosts;
 }
 
-Candidate_sphere_sphere_1::~Candidate_sphere_sphere_1(){ CumSumData = NULL;  VectOfCosts = NULL; }
+Candidate_sphere_sphere_1::~Candidate_sphere_sphere_1(){ CumSumData = NULL; CumSumData2 = NULL;  VectOfCosts = NULL; }
 
 unsigned int Candidate_sphere_sphere_1::GetTau()const { return Tau; }
 
@@ -30,9 +31,10 @@ void Candidate_sphere_sphere_1::CleanOfCandidate() { CumSumData = NULL;  VectOfC
 
 bool Candidate_sphere_sphere_1::EmptyOfCandidate() { return fl_empty; }
 
-void Candidate_sphere_sphere_1::InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts) {
+void Candidate_sphere_sphere_1::InitialOfCandidate(unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts) {
   Tau = t;
   CumSumData = cumsumdata;
+  CumSumData2 = cumsumdata2;
   VectOfCosts = vectofcosts;
   fl_empty = false;
 }
@@ -42,24 +44,24 @@ void Candidate_sphere_sphere_1::UpdateOfCandidate(unsigned int i, std::vector<st
   unsigned int N = vectlinktocands.size();
   unsigned int t = vectlinktocands[N-1] -> GetTau();
   unsigned int u;
-  double r2;
+  double Radius2;
   Cost cost = Cost(Dim);
-  cost.InitialCost(Dim, Tau, t, CumSumData[Tau], CumSumData[t + 1], VectOfCosts[Tau]);
-  r2 = (VectOfCosts[t + 1] - VectOfCosts[Tau] - cost.get_coef_Var()) / cost.get_coef();
-  if (r2 < 0){
+  cost.InitialCost(Dim, Tau, t, CumSumData, CumSumData2, VectOfCosts);
+  Radius2 = (VectOfCosts[t + 1] - VectOfCosts[Tau] - cost.get_coef_Var()) / cost.get_coef();
+  if (Radius2 < 0) {
     fl_empty = true;
     return;
   }
   pSphere Disk_Taut = pSphere(Dim);
-  Disk_Taut.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+  Disk_Taut.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
   if (i > 0)  {
     pSphere Disk_ut1 = pSphere(Dim);
     double dist;
     for (unsigned int j = 0; j < i; j++) {
       u = vectlinktocands[j] -> GetTau();
-      cost.InitialCost(Dim, u, t-1, CumSumData[u], CumSumData[t], VectOfCosts[u]);
-      r2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var()) / cost.get_coef();
-      Disk_ut1.InitialpSphere(Dim, cost.get_mu(), sqrt(r2));
+      cost.InitialCost(Dim, u, t-1, CumSumData, CumSumData2, VectOfCosts);
+      Radius2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var()) / cost.get_coef();
+      Disk_ut1.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
       dist = Dist(Disk_Taut.get_center(), Disk_ut1.get_center());
       if (dist < (Disk_ut1.get_radius() + Disk_Taut.get_radius())) {
         if (dist <= (Disk_ut1.get_radius() - Disk_Taut.get_radius())) {

@@ -20,12 +20,13 @@ private:
   unsigned int Tau;
   pRectangle* Rect;
   double** CumSumData;
+  double** CumSumData2;
   double* VectOfCosts;
 
 public:
-  Candidate_Iall_Eempty_3(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), VectOfCosts(NULL) { }
-  Candidate_Iall_Eempty_3(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)), CumSumData(NULL), VectOfCosts(NULL) { }
-  Candidate_Iall_Eempty_3(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), VectOfCosts(NULL){ }
+  Candidate_Iall_Eempty_3(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL) { }
+  Candidate_Iall_Eempty_3(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL) { }
+  Candidate_Iall_Eempty_3(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL),VectOfCosts(NULL){ }
   Candidate_Iall_Eempty_3(const Candidate_Iall_Eempty_3 & candidate);
   ~Candidate_Iall_Eempty_3();
 
@@ -33,7 +34,7 @@ public:
 
   void CleanOfCandidate();
   bool EmptyOfCandidate();
-  void InitialOfCandidate(unsigned int t, double** &cumsumdata, double* &vectofcosts);
+  void InitialOfCandidate(unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
   void UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Eempty_3>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
 };
 #endif //CANDIDATE_Iall_Eempty_3_H

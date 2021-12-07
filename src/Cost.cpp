@@ -15,24 +15,24 @@ Cost::Cost(unsigned int dim){
   mu = new double[p];
 }
 
-Cost::Cost(unsigned int dim, unsigned int i, unsigned int t, double* si_1, double* st, double mi_1pen){
+Cost::Cost(unsigned int dim, unsigned int i, unsigned int t,double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts){
   p = dim;
   coef = t - i + 1;
-  mi_1_p = mi_1pen;
+  mi_1_p = vectofcosts[i];
   mu = new double[p];
 
   double sum_mu2 = 0;
   double sum_dif_x2 = 0;
 
   for (unsigned int k = 0; k < p; k++){
-    mu[k] = (st[k] - si_1[k])/coef;
+    mu[k] = (cumsumdata[t+1][k] - cumsumdata[i][k])/coef;
 
     sum_mu2 = sum_mu2 + mu[k] * mu[k];
-    sum_dif_x2 = sum_dif_x2 + (st[p + k] - si_1[p + k]);
+    sum_dif_x2 = sum_dif_x2 + (cumsumdata2[t+1][k] - cumsumdata2[i][k]);
   }
   coef_Var = sum_dif_x2 - coef * sum_mu2;
 }
-//constructor copy***************r**********************************************
+//constructor copy*************************************************************
 Cost::Cost(const Cost &cost){
   p = cost.p;
   coef = cost.coef;
@@ -45,19 +45,19 @@ Cost::Cost(const Cost &cost){
 Cost::~Cost(){delete [] mu; mu = NULL;}
 
 //InitialCost***********************************************************
-void Cost::InitialCost(unsigned int dim, unsigned int i, unsigned int t, double* &si_1, double* &st, double mi_1pen){
+void Cost::InitialCost(unsigned int dim, unsigned int i, unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts){
   p = dim;
   coef = t - i + 1;
-  mi_1_p = mi_1pen;
+  mi_1_p = vectofcosts[i];
 
   double sum_mu2 = 0;
   double sum_dif_x2 = 0;
 
   for (unsigned int k = 0; k < p; k++){
-    mu[k] = (st[k] - si_1[k])/coef;
+    mu[k] = (cumsumdata[t+1][k] - cumsumdata[i][k])/coef;
 
     sum_mu2 = sum_mu2 + mu[k] * mu[k];
-    sum_dif_x2 = sum_dif_x2 + (st[p + k] - si_1[p + k]);
+    sum_dif_x2 = sum_dif_x2 + (cumsumdata2[t+1][k] - cumsumdata2[i][k]);
   }
   coef_Var = sum_dif_x2 - coef * sum_mu2;
 }

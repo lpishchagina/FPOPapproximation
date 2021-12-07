@@ -25,13 +25,13 @@ private:
 public:
   Cost(){};
   Cost(unsigned int dim);
-  Cost(unsigned int dim, unsigned int i, unsigned int t, double* si_1, double* st, double mi_1pen);
+  Cost(unsigned int dim, unsigned int i, unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
 
   Cost(const Cost &cost);
 
   ~Cost();
 
-  void InitialCost(unsigned int dim, unsigned int i, unsigned int t, double* &si_1, double* &st, double mi_1pen);
+  void InitialCost(unsigned int dim, unsigned int i, unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
   unsigned int get_p() const;
   unsigned int get_coef() const;
   double get_coef_Var() const;
