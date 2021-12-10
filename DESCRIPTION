@@ -4,7 +4,7 @@ Title: FPOPapproximation
 Version: 1.0
 Date: 2021-11-15
 Author: Liudmila Pishchagina
-Authors@R: c(person("Liudmila", "Pishchagina", email = "vincent.runge@univ-evry.fr", role = c("aut", "cre")),person("Vincent", "Runge", role = c("aut")),person("Guillem", "Rigaill", role = c("aut")))
+Authors@R: c(person("Liudmila", "Pishchagina", email = "ludmilashabarshova1991@gmail.com", role = c("aut", "cre")),person("Vincent", "Runge", role = c("aut")),person("Guillem", "Rigaill", role = c("aut")))
 Maintainer: Liudmila Pishchagina <ludmilashabarshova1991@gmail.com>
 Description: FPOPapproximation is an R package written in Rcpp/C++ and developed to detect changes using the Functional Pruning Optimal Partitioning method (FPOP) in p-variate time series of length n. The FPOP method consists in analysing some subsets Zit, i = 1,.., t at each iteration t, each of them being associated to a last change-point candidate in the dynamic programming algorithm. The subsets Zit are described by the intersection of elementary (convex) sets Sij and Sjt and their complement. In Gaussian case the sets S are p-balls. Our package explores a few pruning strategies to detect the emptiness of the Zit set. This task is difficult in dimension greater that 1 and we need to develop approximation strategies. Our goal is to find approximations leading to a reduced time complexity from quadratic to quasi-linear as obtained by the FPOP algorithm in dimension 1 on simulations. 
 License: GPL (>= 2)
