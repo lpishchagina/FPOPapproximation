@@ -41,6 +41,7 @@ public:
   void DoEmpty_rect();
   void Exclusion_disk(const pSphere &disk);
   void Intersection_disk(const pSphere &disk);
+  void CubeApproximation(const pSphere &disk);
 };
 
 #endif //PRECTANGLE_H

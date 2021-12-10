@@ -1,4 +1,4 @@
-#' @title changes_rnorm
+#' @title rnormChanges
 #'
 #' @description Generation of data (normal distribution) of dimension p with a given values of means and changes
 #'
@@ -18,10 +18,10 @@
 #' Noise <- 1
 #' Dim <- 2
 #' Penality <- 2*Dim*log(N)
-#'time_series1 <- changes_rnorm(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
-#' time_series2 <- changes_rnorm(p = Dim, n = N, changes = NULL, means = matrix(0, ncol = 1, nrow = Dim), noise = Noise)
+#'time_series1 <- rnormChanges(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
+#' time_series2 <- rnormChanges(p = Dim, n = N, changes = NULL, means = matrix(0, ncol = 1, nrow = Dim), noise = Noise)
 
-changes_rnorm <- function(p, n, changes = NULL, means = matrix(0, ncol = 1, nrow = p), noise = 1) {
+rnormChanges <- function(p, n, changes = NULL, means = matrix(0, ncol = 1, nrow = p), noise = 1) {
   #---stop---#
   if (!is.null(changes) && n <= changes[length(changes)]) {
     stop('The last element of changepoints is always less than n!')

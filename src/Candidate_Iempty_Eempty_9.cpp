@@ -22,26 +22,25 @@ Candidate_Iempty_Eempty_9::~Candidate_Iempty_Eempty_9() { CumSumData = NULL; Cum
 
 unsigned int Candidate_Iempty_Eempty_9::GetTau()const { return Tau; }
 
-void Candidate_Iempty_Eempty_9::Clean_fl_empty() { fl_empty = false;}
-
-void Candidate_Iempty_Eempty_9::CleanOfCandidate() { CumSumData = NULL;  CumSumData2 = NULL; VectOfCosts = NULL; }
+void Candidate_Iempty_Eempty_9::CleanOfCandidate() { CumSumData = NULL;  CumSumData2 = NULL; VectOfCosts = NULL; fl_empty = false; }
 
 bool Candidate_Iempty_Eempty_9::EmptyOfCandidate() { return fl_empty; }
 
-void Candidate_Iempty_Eempty_9::InitialOfCandidate(unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts) {
-  Tau = t;
+void Candidate_Iempty_Eempty_9::InitialOfCandidate(unsigned int tau, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts) {
+  Tau = tau;
   CumSumData = cumsumdata;
   CumSumData2 = cumsumdata2;
   VectOfCosts = vectofcosts;
   fl_empty = false;
 }
 
-void Candidate_Iempty_Eempty_9::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iempty_Eempty_9>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
-  Clean_fl_empty();
-  unsigned int t = vectlinktocands[vectlinktocands.size()-1] -> GetTau();
+void Candidate_Iempty_Eempty_9::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Iempty_Eempty_9>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
+  fl_empty = false;
+  //pelt
   Cost cost = Cost(Dim);
-  cost.InitialCost(Dim, Tau, t, CumSumData, CumSumData2, VectOfCosts);
-  double Radius2 = (VectOfCosts[t + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
+  unsigned int LastT = vectlinktocands[vectlinktocands.size()-1] -> GetTau();
+  cost.InitialCost(Dim, Tau, LastT, CumSumData, CumSumData2, VectOfCosts);
+  double Radius2 = (VectOfCosts[LastT + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
   if (Radius2 < 0) {
     fl_empty = true;
   }

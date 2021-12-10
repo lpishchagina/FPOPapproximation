@@ -2,12 +2,17 @@
 #define CANDIDATE_ILAST_ERANDOM_6_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <iterator>
+#include <stdio.h>
+#include <math.h>
+
+#include <Rcpp.h>
 
 #include "pRectangle.h"
 #include "Cost.h"
-
 
 class Candidate_Ilast_Erandom_6{
 private:
@@ -30,7 +35,7 @@ public:
 
   void CleanOfCandidate();
   bool EmptyOfCandidate();
-  void InitialOfCandidate(unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
-  void UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Ilast_Erandom_6>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
+  void InitialOfCandidate(unsigned int tau, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
+  void UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Ilast_Erandom_6>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
 };
 #endif // CANDIDATE_ILAST_ERANDOM_6_H

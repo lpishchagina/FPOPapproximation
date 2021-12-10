@@ -149,5 +149,13 @@ void pRectangle::Exclusion_disk(const pSphere &disk){
   delete [] pnt_max;
   pnt_max = NULL;
 }
+//CubeApproximation*************************************************************
+void pRectangle::CubeApproximation(const pSphere &disk){
+  double r = disk.get_radius();
+  double* c = disk.get_center();
+  for (unsigned int k = 0; k < p; k++){
+    coordinates[k][0] = c[k] - r;
+    coordinates[k][1] = c[k] + r;
+  }
+}
 //******************************************************************************
-

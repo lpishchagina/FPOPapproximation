@@ -1,3 +1,4 @@
+// Rect^Tau_t = inter_{j = Tau^t}(S^tau_j) = Rect^Tau_(t-1) inter S^Tau_t
 #include "Candidate_Iall_Eempty_3.h"
 
 using namespace Rcpp;
@@ -20,35 +21,26 @@ void Candidate_Iall_Eempty_3::CleanOfCandidate() { CumSumData = NULL;  CumSumDat
 
 bool Candidate_Iall_Eempty_3::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
 
-void Candidate_Iall_Eempty_3::InitialOfCandidate(unsigned int t, double** &cumsumdata,  double** &cumsumdata2, double* &vectofcosts) {
-  Tau = t;
+void Candidate_Iall_Eempty_3::InitialOfCandidate(unsigned int tau, double** &cumsumdata,  double** &cumsumdata2, double* &vectofcosts) {
+  Tau = tau;
   CumSumData = cumsumdata;
   CumSumData2 = cumsumdata2;
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Iall_Eempty_3::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iall_Eempty_3>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
-  unsigned int N = vectlinktocands.size();
-  unsigned int t = vectlinktocands[N-1] -> GetTau();
-  unsigned int u;
-  double Radius2;
-  Rect -> Clean_rect();
+void Candidate_Iall_Eempty_3::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Iall_Eempty_3>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
+  RealNbExclus = 0;
+  //pelt
   Cost cost = Cost(Dim);
-  pSphere Disk = pSphere(Dim);
-  //$\R_tau^t = cap_{j=u}^t S_u^t $
-  for (unsigned int j = i; j < N; j++) {
-    u = vectlinktocands[j] -> GetTau();
-    cost.InitialCost(Dim, u, t, CumSumData, CumSumData2, VectOfCosts);
-    Radius2 = (VectOfCosts[t + 1] - VectOfCosts[u] - cost.get_coef_Var()) / cost.get_coef();
-    if (Radius2 < 0) {
-      Rect -> DoEmpty_rect();
-      return;
-    }
-    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-    Rect -> Intersection_disk(Disk);
-    if (Rect -> IsEmpty_rect()) {
-      return;
-    }
+  unsigned int LastT = vectlinktocands[vectlinktocands.size() - 1] -> GetTau();
+  cost.InitialCost(Dim, Tau, LastT, CumSumData, CumSumData2, VectOfCosts);
+  double Radius2 = (VectOfCosts[LastT + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
+  if (Radius2 < 0) {
+    Rect -> DoEmpty_rect();
+    return;
   }
+  //intersection : Rect^Tau_t = Rect^Tau_(t-1) inter S^Tau_t
+  pSphere Disk = pSphere(Dim);
+  Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
+  Rect -> Intersection_disk(Disk);
 }
-

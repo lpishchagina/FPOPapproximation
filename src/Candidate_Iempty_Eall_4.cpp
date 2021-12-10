@@ -1,3 +1,4 @@
+// Rect^Tau_t = RectApprox(S^Tau_Tau) \ (union_{j=1^Tau-1}S^j_(Tau-1))?????
 #include "Candidate_Iempty_Eall_4.h"
 
 using namespace Rcpp;
@@ -27,42 +28,41 @@ void Candidate_Iempty_Eall_4::InitialOfCandidate(unsigned int t, double** &cumsu
   VectOfCosts = vectofcosts;
 }
 
-void Candidate_Iempty_Eall_4::UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iempty_Eall_4>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
-  unsigned int N = vectlinktocands.size();
-  unsigned int t = vectlinktocands[N-1] -> GetTau();
-  unsigned int u;
-  double Radius2;
+void Candidate_Iempty_Eall_4::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Iempty_Eall_4>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   RealNbExclus = 0;
-  Rect -> Clean_rect();
-  Cost cost = Cost(Dim);
-  pSphere Disk = pSphere(Dim);
-  //intersection
-  cost.InitialCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts);
-  Radius2 = (VectOfCosts[t + 1] - VectOfCosts[t] - cost.get_coef_Var())/cost.get_coef();
-  if (Radius2 < 0) {
-    Rect -> DoEmpty_rect();
-    return;
-  }
-  Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-  Rect -> Intersection_disk(Disk);
-  //exclusion
-  if (i > 0) {
-    unsigned int NbEmptyInter = 0;
-    for (unsigned int j = 0; j < i; j++) {
-      u = vectlinktocands[j] -> GetTau();
-      cost.InitialCost(Dim, u, t-1, CumSumData, CumSumData2, VectOfCosts);
-      Radius2 = (VectOfCosts[t] - VectOfCosts[u] - cost.get_coef_Var()) / cost.get_coef();
-      Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-      if (Rect -> EmptyIntersection((Disk))) {
-        NbEmptyInter++;
-      } else {
-        Rect -> Exclusion_disk(Disk);
-        if (Rect -> IsEmpty_rect()) {
-          RealNbExclus = j + 1- NbEmptyInter;
-          return;
+  if (IndexToLinkOfUpdCand == vectlinktocands.size() - 1 ) {
+    //pelt
+    Cost cost = Cost(Dim);
+    cost.InitialCost(Dim, Tau, Tau, CumSumData, CumSumData2, VectOfCosts);
+    double Radius2 = (VectOfCosts[Tau + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
+    if (Radius2 < 0) {
+      Rect -> DoEmpty_rect();
+      return;
+    }
+    //Rect^Tau_t = RectApprox(S^Tau_Tau)
+    pSphere Disk = pSphere(Dim);
+    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
+    Rect -> CubeApproximation(Disk);
+    //exclusion : Rect^Tau_t = Rect^Tau_t \ (union_{j=1^Tau-1}S^j_(Tau-1))
+    if (IndexToLinkOfUpdCand > 0) {
+      unsigned int j;
+      unsigned int NbEmptyInter = 0;
+      for (unsigned int i = 0; i < IndexToLinkOfUpdCand; i++) {
+        j = vectlinktocands[i] -> GetTau();
+        cost.InitialCost(Dim, j, Tau-1, CumSumData, CumSumData2, VectOfCosts);
+        Radius2 = (VectOfCosts[Tau] - VectOfCosts[j] - cost.get_coef_Var()) / cost.get_coef();
+        Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
+        if (Rect -> EmptyIntersection((Disk))) {
+          NbEmptyInter++;
+        } else {
+          Rect -> Exclusion_disk(Disk);
+          if (Rect -> IsEmpty_rect()) {
+            RealNbExclus = i + 1 - NbEmptyInter;
+            return;
+          }
         }
       }
+      RealNbExclus = IndexToLinkOfUpdCand - NbEmptyInter;
     }
-    RealNbExclus = i - NbEmptyInter;
   }
 }

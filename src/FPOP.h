@@ -1,7 +1,7 @@
 #ifndef FPOP_H
 #define FPOP_H
 
-#include "Candidate_sphere_sphere_1.h"
+#include "Candidate_Ilast_Eall_sphere_1.h"
 #include "Candidate_Iall_Eall_2.h"
 #include "Candidate_Iall_Eempty_3.h"
 #include "Candidate_Iempty_Eall_4.h"
@@ -10,6 +10,10 @@
 #include "Candidate_Iall_Erandom_7.h"
 #include "Candidate_Irandom_Erandom_8.h"
 #include "Candidate_Iempty_Eempty_9.h"
+#include "Candidate_Irandom_Eall_10.h"
+#include "Candidate_Irandom_Eall_sphere_11.h"
+#include "Candidate_Irandom_Erandom_sphere_12.h"
+#include "Candidate_Ilast_Erandom_sphere_13.h"
 
 #include <Rcpp.h>
 #include "math.h"
@@ -154,8 +158,6 @@ public:
     unsigned int u;
     //Algorithm-----------------------------------------------------------------
     for (unsigned int t = 0; t < N; t++) {
-      Rcpp::Rcout<<"t = "<<t<<endl;
-
       cost.InitialCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts); // Guillem : a link to CumSumData ? check in cost object (cost.h)
       min_val = cost.get_min();                       //min value of cost
       tau = t;                                 //best last position
@@ -172,9 +174,7 @@ public:
       }
       //new min, best last changepoint and SegmentMeans--------------------------------
       VectOfCosts[t + 1] = min_val + Penality;
-      Rcpp::Rcout<< " VectOfCosts[t + 1] ="<< VectOfCosts[t + 1]<<endl;
       LastChpt[t] = tau;
-      Rcpp::Rcout<< " LastChpt[t] ="<< LastChpt[t]<<endl;
       //Candidate of Change.Initialisation.
       candidate.InitialOfCandidate(t, CumSumData, CumSumData2, VectOfCosts);
       ListOfCandidates.push_back(candidate);
@@ -189,10 +189,10 @@ public:
       //Second run:
       //Update ListOfCandidates
       unsigned int SizeVectLink = VectLinkToCandidates.size();
-      for (unsigned int i = 0; i< SizeVectLink; i++) {
-        VectLinkToCandidates[i] -> UpdateOfCandidate(i,VectLinkToCandidates, RealNbExclus);
+      for (unsigned int IndexOfCandVectLink = 0; IndexOfCandVectLink < SizeVectLink; IndexOfCandVectLink++) {
+        VectLinkToCandidates[IndexOfCandVectLink] -> UpdateOfCandidate(IndexOfCandVectLink,VectLinkToCandidates, RealNbExclus);
         if (NbOfExclus) {
-          FileNbExclus << VectLinkToCandidates[i] -> GetTau() << " " << RealNbExclus << " ";
+          FileNbExclus << VectLinkToCandidates[IndexOfCandVectLink] -> GetTau() << " " << RealNbExclus << " ";
         }
       }
       if (NbOfExclus) {

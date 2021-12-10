@@ -34,6 +34,6 @@ public:
   void CleanOfCandidate();
   bool EmptyOfCandidate();
   void InitialOfCandidate(unsigned int t, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
-  void UpdateOfCandidate(unsigned int i, std::vector<std::list<Candidate_Iempty_Eall_4>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
+  void UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Iempty_Eall_4>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
 };
 #endif //CANDIDATE_IEMPTY_EALL_4_H
