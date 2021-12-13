@@ -1,4 +1,4 @@
-// Rect^tau_t = Cube(S^tau_t)\ S^RandBeforeTau_(Tau-1)})
+// Rect^tau_t = (Rect^tau_(t-1) inter S^tau_t)\ S^RandBeforeTau_(Tau-1)})
 #include "Candidate_Ilast_Erandom_6.h"
 
 using namespace Rcpp;
@@ -38,19 +38,19 @@ void Candidate_Ilast_Erandom_6::UpdateOfCandidate(unsigned int IndexToLinkOfUpdC
   RealNbExclus = 0;
   //pelt
   Cost cost = Cost(Dim);
-  unsigned int tLast = vectlinktocands[vectlinktocands.size() -1] -> GetTau();
-  cost.InitialCost(Dim, Tau, tLast, CumSumData, CumSumData2, VectOfCosts);
-  double Radius2 = (VectOfCosts[tLast + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
+  unsigned int LastT = vectlinktocands[vectlinktocands.size() - 1] -> GetTau();
+  cost.InitialCost(Dim, Tau, LastT, CumSumData, CumSumData2, VectOfCosts);
+  double Radius2 = (VectOfCosts[LastT + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
   if (Radius2 < 0) {
     Rect -> DoEmpty_rect();
     return;
   }
-  //last : Rect^Tau_t = Cube(S^Tau_LastT)
+  //intersection : Rect^Tau_t = Rect^Tau_(t-1) inter S^Tau_t
   pSphere Disk = pSphere(Dim);
   Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-  Rect -> CubeApproximation(Disk);
+  Rect -> Intersection_disk(Disk);
   //exclusion : Rect^Tau_t= Rect^Tau_t \ S^RandBeforeTau_(Tau-1)})
-  if (IndexToLinkOfUpdCand > 0) {
+  if ((IndexToLinkOfUpdCand > 0) && (!Rect -> IsEmpty_rect())) {
     unsigned int IndexRandBeforeTau = get_Number(IndexToLinkOfUpdCand) - 1;
     unsigned int RandCandBeforeTau = vectlinktocands[IndexRandBeforeTau] -> GetTau();
     cost.InitialCost(Dim, RandCandBeforeTau, Tau-1, CumSumData, CumSumData2, VectOfCosts);

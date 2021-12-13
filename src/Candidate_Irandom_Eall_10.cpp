@@ -37,8 +37,8 @@ void Candidate_Irandom_Eall_10::InitialOfCandidate(unsigned int tau, double** &c
 
 void  Candidate_Irandom_Eall_10::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Irandom_Eall_10>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   RealNbExclus = 0;
-  //random after Tau: Rect^tau_t = Cube(S^Tau_RandAfterTau
-  unsigned int IndexRandAfterTau = get_Number(vectlinktocands.size() - IndexToLinkOfUpdCand) + IndexToLinkOfUpdCand - 1;
+  //random after Tau: Rect^tau_t = Cube(S^Tau_RandAfterTau)
+  unsigned int IndexRandAfterTau = get_Number (vectlinktocands.size() - IndexToLinkOfUpdCand) + IndexToLinkOfUpdCand - 1;
   unsigned int RandCandAfterTau = vectlinktocands[IndexRandAfterTau] -> GetTau();
   //pelt
   Cost cost = Cost(Dim);
@@ -50,7 +50,7 @@ void  Candidate_Irandom_Eall_10::UpdateOfCandidate(unsigned int IndexToLinkOfUpd
   }
   pSphere Disk = pSphere(Dim);
   Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-  Rect -> CubeApproximation(Disk);
+  Rect -> Intersection_disk(Disk);
   //exclusion : Rect^Tau_t= Rect^Tau_t \ (union_{j=1^Tau-1}S^j_(Tau-1))
   if ((IndexToLinkOfUpdCand > 0) && (!Rect -> IsEmpty_rect())) {
     unsigned int j;

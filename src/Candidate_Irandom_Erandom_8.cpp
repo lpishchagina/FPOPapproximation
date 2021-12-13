@@ -36,7 +36,7 @@ void Candidate_Irandom_Erandom_8::InitialOfCandidate(unsigned int tau, double** 
 
 void Candidate_Irandom_Erandom_8::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Irandom_Erandom_8>::iterator> &vectlinktocands, unsigned int& RealNbExclus){
   RealNbExclus = 0;
-  //random after Tau: Rect^tau_t = Cube(S^Tau_RandAfterTau)
+  //random after Tau: Rect^tau_t = (Rect^tau_(t-1) inter S^Tau_RandAfterTau)
   unsigned int IndexRandAfterTau = get_Number (vectlinktocands.size() - IndexToLinkOfUpdCand) + IndexToLinkOfUpdCand - 1;
   unsigned int RandCandAfterTau = vectlinktocands[IndexRandAfterTau] -> GetTau();
   //pelt
