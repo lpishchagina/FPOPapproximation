@@ -228,21 +228,21 @@ public:
       chp = LastChpt[chp-1];
     }
     Changes.push_back(0);
-    /*
-    //calculation of the segment means
 
+    ///
+    unsigned int j = 1;
     std::vector<double> MeanOneSegment;
-    Rcpp::Rcout<<"size of changes ="<< Changes.size()<<endl;
-    for (unsigned int chpt_i = 0; chpt_i < (Changes.size() - 2); chpt_i++) {
+    chp = N - 1;
+    while (chp > 0) {
       MeanOneSegment.clear();
-      unsigned int coef = Changes[chpt_i] - Changes[chpt_i] + 1;
       for (unsigned int k = 0; k < Dim; k++) {
-        MeanOneSegment.push_back( (CumSumData[Changes[chpt_i] + 1][k] - CumSumData[Changes[chpt_i + 1]][k]) / coef );
+        MeanOneSegment.push_back((CumSumData[chp + 1][k] - CumSumData[Changes[j]][k])/(chp - Changes[j] + 1));
       }
       SegmentMeans.push_back(MeanOneSegment);
+      chp = Changes[j];
+      j = j + 1;
     }
     reverse(SegmentMeans.begin(), SegmentMeans.end());
-*/
     Changes.pop_back();//remove 0
     reverse(Changes.begin(), Changes.end());
     Changes.pop_back();//remove N
