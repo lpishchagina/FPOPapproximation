@@ -30,9 +30,9 @@
 #' \item{\code{UnpenalizedCost}}{is a number equal to the global cost.}
 #' }
 #'
-#' @examples approxFpop(data = chpt_rnorm(p = 3, n = 100, changes = 50, means = matrix(c (1,2,3,4, 5, 7), nrow = 3), noise = 1), penalty = 2*log(100), type_approx = 2)
-#' N <- 1000
-#' Chpt <-NULL
+#' @examples
+#' N <- 100
+#' Chpt <-50
 #' Means <-  matrix(c(0,1,1,10), nrow = 2)
 #' Noise <- 1
 #' Dim <- 2
@@ -61,28 +61,36 @@ NULL
 #'
 #'Approx[[13]] <- approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'empty', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
 #'Approx
+NULL
+
+#' @title TestApproxFpop
 #'
-#'TimeApprox <- list()
-#'TimeApprox[[1]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'all', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[2]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'all', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[3]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'all', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE))
+#' @description Сomparing the parameters ("UnpenalizedCost", "LastChptin") the FPOP method (using the rectangle approximation of the sets) with the values of these parameters in the PELT method.
+#' @param data is a matrix of data (p-rows x n-columns).
+#' @param penalty is a value of penalty (a non-negative real number).
+#' @param approximation is the type of approximation : 'rectangle' or 'sphere' (by default, 'rectangle').
+#' @param intersection is the type of intersection : 'empty', 'all', 'last', 'random' or 'sphere'.
+#' @param exclusion is the type of intersection : 'empty', 'all', 'random' or 'sphere'.
+NULL
+
+#' @return 'TRUE' if parameters are the same, else 'FALSE'.
 #'
-#'TimeApprox[[4]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'empty', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'
-#'TimeApprox[[5]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'last', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[6]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'
-#'TimeApprox[[7]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle',intersection = 'random', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[8]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'random', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'
-#'TimeApprox[[9]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'sphere', intersection = 'last', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[10]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'sphere', intersection = 'random', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[11]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'sphere', intersection = 'random', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox[[12]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'sphere', intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'
-#'TimeApprox[[13]] <- system.time(approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'empty', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE))
-#'TimeApprox
+#' @examples
+#' N <- 100
+#' Chpt <-50
+#' Means <-  matrix(c(0,1,1,10), nrow = 2)
+#' Noise <- 1
+#' Dim <- 2
+#' Penality <- 2*Dim*log(N)
+#' time_series <- rnormChanges(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
+#'TestApproxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'all', exclusion = 'all')
+NULL
+
 approxFpop <- function(data, penalty, approximation = "rectangle", intersection = "all", exclusion = "all", NbOfCands = FALSE, NbOfExclus = FALSE) {
     .Call(`_FPOPapproximation_approxFpop`, data, penalty, approximation, intersection, exclusion, NbOfCands, NbOfExclus)
+}
+
+TestApproxFpop <- function(data, penalty, approximation = "rectangle", intersection = "all", exclusion = "all") {
+    .Call(`_FPOPapproximation_TestApproxFpop`, data, penalty, approximation, intersection, exclusion)
 }
 

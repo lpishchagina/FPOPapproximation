@@ -27,9 +27,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// TestApproxFpop
+bool TestApproxFpop(Rcpp::NumericMatrix data, double penalty, std::string approximation, std::string intersection, std::string exclusion);
+RcppExport SEXP _FPOPapproximation_TestApproxFpop(SEXP dataSEXP, SEXP penaltySEXP, SEXP approximationSEXP, SEXP intersectionSEXP, SEXP exclusionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< double >::type penalty(penaltySEXP);
+    Rcpp::traits::input_parameter< std::string >::type approximation(approximationSEXP);
+    Rcpp::traits::input_parameter< std::string >::type intersection(intersectionSEXP);
+    Rcpp::traits::input_parameter< std::string >::type exclusion(exclusionSEXP);
+    rcpp_result_gen = Rcpp::wrap(TestApproxFpop(data, penalty, approximation, intersection, exclusion));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_FPOPapproximation_approxFpop", (DL_FUNC) &_FPOPapproximation_approxFpop, 7},
+    {"_FPOPapproximation_TestApproxFpop", (DL_FUNC) &_FPOPapproximation_TestApproxFpop, 5},
     {NULL, NULL, 0}
 };
 

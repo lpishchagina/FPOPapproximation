@@ -107,7 +107,7 @@ public:
   unsigned int GetDim() const { return Dim; }
   double GetPenality() const { return Penality; }
   double* GetVectOfCosts() const { return VectOfCosts; }
-  unsigned int* GetLastChpt() const { return LastChpt; }
+  unsigned int* GetLastChpt()  { return LastChpt; }
 
   double** CalcCumSumData(Rcpp::NumericMatrix data) {
     for (unsigned int k = 0; k < Dim; k++) {
@@ -240,7 +240,7 @@ public:
       }
       SegmentMeans.push_back(MeanOneSegment);
       chp = Changes[j];
-      j = j + 1;
+      j++;
     }
     reverse(SegmentMeans.begin(), SegmentMeans.end());
     Changes.pop_back();//remove 0
@@ -248,6 +248,40 @@ public:
     Changes.pop_back();//remove N
 
     UnpenalizedCost = VectOfCosts[N] - Penality * (Changes.size());
+  }
+
+  List ResAlgoFPOP(){
+    List res;
+    res["changes"] = GetChanges();
+    res["means"] = GetSegmentMeans();
+    res["UnpenalizedCost"] = GetUnpenalizedCost();
+    return res;
+  }
+
+  //Test of  the  UnpenalizedCost  and LastChpt
+  bool TestLastChpt(unsigned int* LastChptOfTestX) {
+    bool res  = true;
+    unsigned int  IndexOfPoint = 0;
+    while (res && (IndexOfPoint < N)) {
+      if (LastChpt[IndexOfPoint] != LastChptOfTestX[IndexOfPoint] ) {
+        res = false;
+      }
+      IndexOfPoint++;
+    }
+    return res;
+  }
+
+  bool TestUnpenalizedCost(double UnpenalizedCostOfTestX) {
+    bool res  = (UnpenalizedCost == UnpenalizedCostOfTestX);
+    return res;
+  }
+
+  bool TestFPOP(double UnpenalizedCostOfTestX, unsigned int* LastChptOfTestX) {
+    bool res  = (UnpenalizedCost == UnpenalizedCostOfTestX);
+    if (res) {
+      res = TestLastChpt(LastChptOfTestX);
+    }
+    return res;
   }
 };
 #endif //FPOP_H
