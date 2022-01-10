@@ -61,7 +61,7 @@ approxFpop <- function(data, penalty, approximation = "rectangle", intersection 
     .Call(`_FPOPapproximation_approxFpop`, data, penalty, approximation, intersection, exclusion, NbOfCands, NbOfExclus)
 }
 
-#' @title TestTwoApproxFpop
+#'@title TestTwoApproxFpop
 #'
 #' @description Сomparing the parameters ("UnpenalizedCost", "LastChpt") for two different FPOP methods (using the rectangle approximation of the sets) .
 #' @param data is a matrix of data (p-rows x n-columns).

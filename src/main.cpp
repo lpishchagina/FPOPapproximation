@@ -262,7 +262,8 @@ List approxFpop(Rcpp::NumericMatrix data, double penalty, std::string approximat
   return res;
 }
 
-//' @title TestTwoApproxFpop
+
+//'@title TestTwoApproxFpop
 //'
 //' @description Сomparing the parameters ("UnpenalizedCost", "LastChpt") for two different FPOP methods (using the rectangle approximation of the sets) .
 //' @param data is a matrix of data (p-rows x n-columns).
