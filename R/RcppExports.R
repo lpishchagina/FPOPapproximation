@@ -56,6 +56,10 @@
 #' Approx[[12]] <- approxFpop(data = time_series, penalty = Penality, approximation = 'sphere', intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
 #'
 #' Approx[[13]] <- approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'empty', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
+#' Approx[[14]] <- approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'last', exclusion = 'allmodif', NbOfCands = FALSE, NbOfExclus = FALSE)
+#' Approx[[15]] <- approxFpop(data = time_series, penalty = Penality, approximation = 'rectangle', intersection = 'last', exclusion = 'allmodif2', NbOfCands = FALSE, NbOfExclus = FALSE)
+NULL
+
 #' Approx
 approxFpop <- function(data, penalty, approximation = "rectangle", intersection = "all", exclusion = "all", NbOfCands = FALSE, NbOfExclus = FALSE) {
     .Call(`_FPOPapproximation_approxFpop`, data, penalty, approximation, intersection, exclusion, NbOfCands, NbOfExclus)
@@ -81,8 +85,8 @@ approxFpop <- function(data, penalty, approximation = "rectangle", intersection 
 #' }
 #'
 #' @examples
-#' N <- 100
-#' Chpt <-50
+#' N <- 10
+#' Chpt <-5
 #' Means <-  matrix(c(0,1,1,10), nrow = 2)
 #' Noise <- 1
 #' Dim <- 2
