@@ -14,6 +14,8 @@
 #include "Candidate_Irandom_Eall_sphere_11.h"
 #include "Candidate_Irandom_Erandom_sphere_12.h"
 #include "Candidate_Ilast_Erandom_sphere_13.h"
+#include "Candidate_Ilast_EallModif_14.h"
+#include "Candidate_Ilast_EallModif2_15.h"
 
 #include <Rcpp.h>
 #include "math.h"
