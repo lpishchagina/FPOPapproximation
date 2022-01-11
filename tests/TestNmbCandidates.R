@@ -15,7 +15,7 @@ library(FPOPapproximation)
 library(base)
 library(rstream)
 library(tidyverse)
-library(ggpubr)
+#library(ggpubr)
 library("RColorBrewer")
 
 NbRep = 20

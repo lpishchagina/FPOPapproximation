@@ -6,7 +6,7 @@ library(FPOPapproximation)
 library(base)
 library(rstream)
 library(tidyverse)
-library(ggpubr)
+#library(ggpubr)
 library("RColorBrewer")
 #Combinations-------------------------------------------------------------------
 approximation = 'rectangle'
