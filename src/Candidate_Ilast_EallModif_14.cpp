@@ -1,10 +1,10 @@
 // Rect^tau_t = (Rect^tau-(LastT-1) interS^Tau_LastT)\ (union_{j=1^Tau-1}S^j_(Tau-1))
-#include "Candidate_Ilast_EallModif2_15.h"
+#include "Candidate_Ilast_EallModif_14.h"
 
 using namespace Rcpp;
 using namespace std;
 
-Candidate_Ilast_EallModif2_15::Candidate_Ilast_EallModif2_15(const Candidate_Ilast_EallModif2_15 & candidate) {
+Candidate_Ilast_EallModif_14::Candidate_Ilast_EallModif_14(const Candidate_Ilast_EallModif_14 & candidate) {
   Dim = candidate.Dim;
   Tau = candidate.Tau;
   Rect= new pRectangle(Dim);
@@ -15,17 +15,17 @@ Candidate_Ilast_EallModif2_15::Candidate_Ilast_EallModif2_15(const Candidate_Ila
   disks_t_1 = candidate.disks_t_1;
 }
 
-Candidate_Ilast_EallModif2_15::~Candidate_Ilast_EallModif2_15() { delete Rect;  CumSumData = NULL;  CumSumData2 = NULL;  VectOfCosts = NULL; }
+Candidate_Ilast_EallModif_14::~Candidate_Ilast_EallModif_14() { delete Rect;  CumSumData = NULL;  CumSumData2 = NULL;  VectOfCosts = NULL; }
 
-unsigned int Candidate_Ilast_EallModif2_15::GetTau()const { return Tau; }
+unsigned int Candidate_Ilast_EallModif_14::GetTau()const { return Tau; }
 
-std::list<pSphere> Candidate_Ilast_EallModif2_15::get_disks_t_1()const { return disks_t_1; }
+std::list<pSphere> Candidate_Ilast_EallModif_14::get_disks_t_1()const { return disks_t_1; }
 
-void Candidate_Ilast_EallModif2_15::CleanOfCandidate() { CumSumData = NULL;  CumSumData2 = NULL;  VectOfCosts = NULL; disks_t_1.clear();}
+void Candidate_Ilast_EallModif_14::CleanOfCandidate() { CumSumData = NULL;  CumSumData2 = NULL;  VectOfCosts = NULL; disks_t_1.clear();}
 
-bool Candidate_Ilast_EallModif2_15::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
+bool Candidate_Ilast_EallModif_14::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
 
-void Candidate_Ilast_EallModif2_15::InitialOfCandidate(unsigned int tau, double** &cumsumdata,  double** &cumsumdata2, double* &vectofcosts) {
+void Candidate_Ilast_EallModif_14::InitialOfCandidate(unsigned int tau, double** &cumsumdata,  double** &cumsumdata2, double* &vectofcosts) {
   Tau = tau;
   CumSumData = cumsumdata;
   CumSumData2 = cumsumdata2;
@@ -47,7 +47,7 @@ void Candidate_Ilast_EallModif2_15::InitialOfCandidate(unsigned int tau, double*
   }
 }
 
-void Candidate_Ilast_EallModif2_15::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Ilast_EallModif2_15>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
+void Candidate_Ilast_EallModif_14::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Ilast_EallModif_14>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   RealNbExclus = 0;
   //pelt
   Cost cost = Cost(Dim);
@@ -66,9 +66,14 @@ void Candidate_Ilast_EallModif2_15::UpdateOfCandidate(unsigned int IndexToLinkOf
   if ((disks_t_1.size() > 0) && (!Rect -> IsEmpty_rect())) {
     std::list<pSphere>::iterator iter = disks_t_1.begin();
     while(iter != disks_t_1.end() && (!Rect -> IsEmpty_rect())){
-      Rect -> Exclusion_disk(*iter);
-      RealNbExclus++;
-      ++iter;
+      if (Rect -> EmptyIntersection(*iter)) {
+        iter = disks_t_1.erase(iter);
+      }//isn't intersection => Remove disks
+      else {
+        Rect -> Exclusion_disk(*iter);
+        RealNbExclus++;
+        ++iter;
+      }
     }
   }
 }
