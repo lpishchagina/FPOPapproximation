@@ -51,9 +51,17 @@ void Candidate_Ilast_EallModif2_15::InitialOfCandidate(unsigned int tau, double*
   */
 }
 
+double Candidate_Ilast_EallModif2_15::Dist(double* a, double*b) {
+  double dist = 0;
+  for (unsigned int k = 0; k < Dim; k++) {
+    dist = dist + (a[k] - b[k])*(a[k] - b[k]);
+  }
+  return sqrt(dist);
+}
+
 void Candidate_Ilast_EallModif2_15::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Candidate_Ilast_EallModif2_15>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
   RealNbExclus = 0;
-  //pelt
+  //check 1 : pelt
   Cost cost = Cost(Dim);
   unsigned int LastT = vectlinktocands[vectlinktocands.size() - 1] -> GetTau();
   cost.InitialCost(Dim, Tau, LastT, CumSumData, CumSumData2, VectOfCosts);
@@ -62,28 +70,38 @@ void Candidate_Ilast_EallModif2_15::UpdateOfCandidate(unsigned int IndexToLinkOf
     Rect -> DoEmpty_rect();
     return;
   }
-  //intersection : Rect^Tau_t = Rect^Tau_(t-1) inter S^Tau_t
+
   pSphere Disk = pSphere(Dim);
   Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-  Rect -> Intersection_disk(Disk);
-
   unsigned int j;
-  //Creation of list of disks(tau-1)
-  if (CreationFl && (!Rect -> IsEmpty_rect())) {
+  std::list<pSphere>::iterator iter;
+  //Creation of list of disks(tau-1) for 1 iteration
+  if (CreationFl) {
     CreationFl = false;
     if (IndexToLinkOfUpdCand > 0) {
+      double dist;
+      pSphere DiskTau_1 = pSphere(Dim);
       for (unsigned int i = 0; i < IndexToLinkOfUpdCand; i++) {
         j = vectlinktocands[i] -> GetTau();
         cost.InitialCost(Dim, j, Tau-1, CumSumData, CumSumData2, VectOfCosts);
         Radius2 = (VectOfCosts[Tau] - VectOfCosts[j] - cost.get_coef_Var()) / cost.get_coef();
-        Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-        disks_t_1.push_back(Disk);
+        DiskTau_1.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
+        dist = Dist(Disk.get_center(), DiskTau_1.get_center());
+        if (dist < (DiskTau_1.get_radius() + Disk.get_radius())) {
+          if (dist <= (DiskTau_1.get_radius() - Disk.get_radius())) {
+           Rect -> DoEmpty_rect();
+            return;
+          }
+        }
+        disks_t_1.push_back(DiskTau_1);
       }
     }
   }
-  //exclusion : Rect^Tau_t= Rect^Tau_t \ (union_{j=1^Tau-1}S^j_(Tau-1))
+  //intersection
+  Rect -> Intersection_disk(Disk);
+  //exclusion
   if ((disks_t_1.size() > 0) && (!Rect -> IsEmpty_rect())) {
-    std::list<pSphere>::iterator iter = disks_t_1.begin();
+    iter = disks_t_1.begin();
     while(iter != disks_t_1.end() && (!Rect -> IsEmpty_rect())){
       if (Rect -> EmptyIntersection(*iter)) {
         iter = disks_t_1.erase(iter);

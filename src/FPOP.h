@@ -37,6 +37,8 @@ private:
 
   double* VectOfCosts;                    //UnpenalizedCost = VectOfCosts[n] - Changes.size()*Penality
   unsigned int* LastChpt;       //vector of the best last changepoints
+  //
+  std::vector <unsigned int> NbOfCandidats;  //vector of the candidats number
 
 public:
   FPOP<CandidateOfChange>() { }
@@ -64,6 +66,8 @@ public:
     Changes = candidate.Changes;
     SegmentMeans = candidate.SegmentMeans;
     UnpenalizedCost = candidate.UnpenalizedCost;
+    //
+    NbOfCandidats = candidate.NbOfCandidats;
 
     VectOfCosts = new double[N + 1];
     LastChpt = new unsigned int[N];
@@ -96,6 +100,7 @@ public:
     delete [] CumSumData2;
     delete [] VectOfCosts;
     delete [] LastChpt;
+
     CumSumData = NULL;
     CumSumData2 = NULL;
     VectOfCosts = NULL;
@@ -110,6 +115,8 @@ public:
   double GetPenality() const { return Penality; }
   double* GetVectOfCosts() const { return VectOfCosts; }
   unsigned int* GetLastChpt()  { return LastChpt; }
+  //
+  std::vector <unsigned int> GetNbOfCandidats()  { return NbOfCandidats; }
 
   double** CalcCumSumData(Rcpp::NumericMatrix data) {
     for (unsigned int k = 0; k < Dim; k++) {
@@ -136,17 +143,24 @@ public:
   }
 
   void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool NbOfCands, bool NbOfExclus){
+    /*
     //file initialisation for tests
     std::ofstream FileNbCands;
     std::ofstream FileNbExclus;
+     */
     unsigned int RealNbExclus = 0;
+    //
+    if (!NbOfCands) {
+      NbOfCandidats.push_back(NULL);
+    }
+    /*
     if (NbOfCands == true) {
       FileNbCands.open("NbOfCands.txt", ios_base::trunc);
     }
     if (NbOfExclus == true) {
       FileNbExclus.open("NbOfExclus.txt", ios_base::trunc);
     }
-
+    */
     VectOfCosts[0] = 0;
     CumSumData = CalcCumSumData(data);
     CumSumData2 = CalcCumSumData2(data);
@@ -193,13 +207,17 @@ public:
       unsigned int SizeVectLink = VectLinkToCandidates.size();
       for (unsigned int IndexOfCandVectLink = 0; IndexOfCandVectLink < SizeVectLink; IndexOfCandVectLink++) {
         VectLinkToCandidates[IndexOfCandVectLink] -> UpdateOfCandidate(IndexOfCandVectLink,VectLinkToCandidates, RealNbExclus);
-        if (NbOfExclus) {
+/*        if (NbOfExclus) {
           FileNbExclus << VectLinkToCandidates[IndexOfCandVectLink] -> GetTau() << " " << RealNbExclus << " ";
         }
+ */
       }
+
+/*
       if (NbOfExclus) {
         FileNbExclus << "\n";
       }
+ */
       //Remove empty candidates
       typename std::list<CandidateOfChange>::iterator it_candidate = ListOfCandidates.begin();
       while (it_candidate != ListOfCandidates.end()) {
@@ -210,10 +228,16 @@ public:
         ++it_candidate;
       }
       //fixe nb_cands
+      /*
       if (NbOfCands) {
         FileNbCands << VectLinkToCandidates.size() << " ";
       }
+       */
+      if (NbOfCands) {
+        NbOfCandidats.push_back(VectLinkToCandidates.size());
+      }
     }
+    /*
     //close file
     if (NbOfCands) {
       FileNbCands << "\n";
@@ -222,6 +246,7 @@ public:
     if (NbOfExclus) {
       FileNbExclus.close();
     }
+     */
     //Result
     //vector of Changes
     unsigned int chp = N;
@@ -257,6 +282,7 @@ public:
     res["changes"] = GetChanges();
     res["means"] = GetSegmentMeans();
     res["UnpenalizedCost"] = GetUnpenalizedCost();
+    res["NumberOfCandidats"] = GetNbOfCandidats();
     return res;
   }
 

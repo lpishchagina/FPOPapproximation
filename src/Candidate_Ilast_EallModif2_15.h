@@ -32,6 +32,8 @@ public:
   Candidate_Ilast_EallModif2_15(const Candidate_Ilast_EallModif2_15 & candidate);
   ~Candidate_Ilast_EallModif2_15();
 
+  double Dist(double* a, double*b);
+
   unsigned int GetTau()const;
   std::list<pSphere> get_disks_t_1() const;
   void CleanOfCandidate();
