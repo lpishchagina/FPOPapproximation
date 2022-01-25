@@ -33,22 +33,6 @@ void Candidate_Ilast_EallModif2_15::InitialOfCandidate(unsigned int tau, double*
   VectOfCosts = vectofcosts;
   disks_t_1.clear();
   CreationFl = true;
-  /*
-  unsigned int i = 0;
-  Cost cost = Cost(Dim);
-  pSphere Disk = pSphere(Dim);
-  unsigned int LastT = Tau -1;
-  double Radius2;
-  while (i != Tau) {
-    cost.InitialCost(Dim, i, LastT, CumSumData, CumSumData2, VectOfCosts);
-    double Radius2 = (VectOfCosts[LastT + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
-    if (Radius2 > 0) {
-      Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-      disks_t_1.push_back(Disk);
-    }
-    i++;
-  }
-  */
 }
 
 double Candidate_Ilast_EallModif2_15::Dist(double* a, double*b) {

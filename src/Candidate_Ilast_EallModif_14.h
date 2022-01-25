@@ -23,12 +23,12 @@ private:
   double** CumSumData2;
   double* VectOfCosts;
   std::list<pSphere> disks_t_1;                            //list of disks(t-1)
-
+  bool CreationFl;
 
 public:
-  Candidate_Ilast_EallModif_14(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL) { }
-  Candidate_Ilast_EallModif_14(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL) { }
-  Candidate_Ilast_EallModif_14(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL) { }
+  Candidate_Ilast_EallModif_14(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true){ }
+  Candidate_Ilast_EallModif_14(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) { }
+  Candidate_Ilast_EallModif_14(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) { }
   Candidate_Ilast_EallModif_14(const Candidate_Ilast_EallModif_14 & candidate);
   ~Candidate_Ilast_EallModif_14();
 
