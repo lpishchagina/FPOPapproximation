@@ -38,7 +38,7 @@ void Candidate_Iall_Eempty_3::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCan
   //intersection : Rect^Tau_t = Rect^Tau_(t-1) inter_{j=i^LastT} S^Tau_j
   for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
     j = vectlinktocands[i] -> GetTau();
-    cost.InitialCost(Dim, Tau, j, CumSumData, CumSumData, VectOfCosts);
+    cost.InitialCost(Dim, Tau, j, CumSumData, CumSumData2, VectOfCosts);
     Radius2 = (VectOfCosts[j + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
     //pelt
     if (Radius2 < 0) {
