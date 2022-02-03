@@ -9,31 +9,20 @@
 #' @param approximation is the type of approximation : 'rectangle' or 'sphere' (by default, 'rectangle').
 #' @param intersection is the type of intersection : 'empty', 'all', 'last' or 'random' (by default, 'last').
 #' @param exclusion is the type of intersection : 'empty', 'all'or 'random'(by default, 'all').
-#' The following parameter combinations are implemented:
-#' (approximation = 'rectangle', intersection ='empty', exclusion ='empty') (PELT-method)
-#' (approximation = 'rectangle', intersection ='all', exclusion ='all')
-#' (approximation = 'rectangle', intersection ='all', exclusion ='empty')
-#' (approximation = 'rectangle', intersection ='empty', exclusion ='all')
-#' (approximation = 'rectangle', intersection ='last', exclusion ='all')
-#' (approximation = 'rectangle', intersection ='last', exclusion ='random')
-#' (approximation = 'rectangle', intersection ='all', exclusion ='random')
-#' (approximation = 'rectangle', intersection ='random', exclusion ='random')
-#' (approximation = 'sphere', intersection ='last', exclusion ='all')
-#' (approximation = 'sphere', intersection ='last', exclusion ='random')
-#' (approximation = 'sphere', intersection ='random', exclusion ='random')
+#' @param str is the structure of a repository for exclusion disks : 'l' (all) or 'v'(reduction) (by default, 'v').
 #' @param NbOfCands is the logical parameter (if NbOfCands = TRUE, than the file "NbOfCands.txt" contains the number of change candidates for each iteration.
-#' @param NbOfExclus is the logical parameter (if NbOfExclus = TRUE, than the file "NbOfExclus.txt" contains the label of candidate and the number of exclusion for change candidates for each iteration.
 #'
-#' @return a list of  elements  = (changes, means, UnpenalizedCost).
+#' @return a list of  elements  = (changes, means, UnpenalizedCost, NumberOfCandidates).
 #'
 #' \describe{
 #' \item{\code{changes}}{is the changepoint vector that gives the last index of each segment for the p-variate time series.}
 #' \item{\code{means}}{is the list of successive means for the p-variate time series.}
 #' \item{\code{UnpenalizedCost}}{is a number equal to the global cost.}
+#' \item{\code{NumberOfCandidates}}{is a number of candidates at each iteration (vector).}
 #' }
 #'
 #' @examples
-#' N <- 5
+#' N <- 100
 #' Chpt <-50
 #' Means <-  matrix(c(0,1,1,10), nrow = 2)
 #' Noise <- 1
@@ -41,28 +30,13 @@
 #' Penalty <- 2*Dim*log(N)
 #' time_series <- rnormChanges(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
 #' time_series <- rnormChanges(p = 2, n = N, changes = NULL, means = matrix(0, ncol = 1, nrow = 2), noise = 1)
-#' Approx <- list()
-#' Approx[[1]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'all', exclusion = 'all', NbOfCands = TRUE, NbOfExclus = FALSE)
-#' Approx[[2]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'all', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[3]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'all', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[4]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'empty', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[5]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'last', exclusion = 'all', NbOfCands = TRUE, NbOfExclus = FALSE)
-#' Approx[[6]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[7]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle',intersection = 'random', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[8]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'random', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[9]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'sphere', intersection = 'last', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[10]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'sphere', intersection = 'random', exclusion = 'all', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[11]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'sphere', intersection = 'random', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[12]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'sphere', intersection = 'last', exclusion = 'random', NbOfCands = FALSE, NbOfExclus = FALSE)
-#'
-#' Approx[[13]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'empty', exclusion = 'empty', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[14]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'last', exclusion = 'allmodif', NbOfCands = FALSE, NbOfExclus = FALSE)
-#' Approx[[15]] <- approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'last', exclusion = 'allmodif2', NbOfCands = FALSE, NbOfExclus = FALSE)
+#' approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'last', exclusion = 'all', str = 'v', NbOfCands = TRUE)
+#' approxFpop(data = time_series, penalty = Penalty, approximation = 'rectangle', intersection = 'last', exclusion = 'random', str = 'v', NbOfCands = FALSE)
+#' approxFpop(data = time_series, penalty = Penalty, approximation = 'sphere', intersection = 'last', exclusion = 'all', str ='v', NbOfCands = FALSE)
 NULL
 
-#' Approx
-approxFpop <- function(data, penalty, approximation = "rectangle", intersection = "all", exclusion = "all", NbOfCands = FALSE, NbOfExclus = FALSE) {
-    .Call(`_FPOPapproximation_approxFpop`, data, penalty, approximation, intersection, exclusion, NbOfCands, NbOfExclus)
+approxFpop <- function(data, penalty, approximation = "rectangle", intersection = "all", exclusion = "all", str = "v", NbOfCands = FALSE) {
+    .Call(`_FPOPapproximation_approxFpop`, data, penalty, approximation, intersection, exclusion, str, NbOfCands)
 }
 
 #'@title TestTwoApproxFpop
@@ -73,9 +47,11 @@ approxFpop <- function(data, penalty, approximation = "rectangle", intersection 
 #' @param approximation1 is the type of approximation : 'rectangle' or 'sphere' (by default, 'rectangle').
 #' @param intersection1 is the type of intersection : 'empty', 'all', 'last', 'random' or 'sphere'(by default, 'last').
 #' @param exclusion1 is the type of intersection : 'empty', 'all', 'random' or 'sphere'(by default, 'all').
+#' @param str1 is the structure of a repository for exclusion disks : 'l' (all) or 'v'(reduction) (by default, 'v').
 #' @param approximation2 is the type of approximation : 'rectangle' or 'sphere' (by default, 'rectangle').
 #' @param intersection2 is the type of intersection : 'empty', 'all', 'last', 'random' or 'sphere'(by default, 'empty').
 #' @param exclusion2 is the type of intersection : 'empty', 'all', 'random' or 'sphere'(by default, 'empty').
+#' @param str2 is the structure of a repository for exclusion disks : 'l' (all) or 'v'(reduction) (by default, 'v').
 #'
 #' @return TRUE or FALSE
 #'
@@ -92,10 +68,10 @@ approxFpop <- function(data, penalty, approximation = "rectangle", intersection 
 #' Dim <- 2
 #' Penality <- 2*Dim*log(N)
 #' time_series <- rnormChanges(p = Dim, n = N, changes = Chpt, means = Means, noise = Noise)
-#' TestTwoApproxFpop(data = time_series, penalty = Penality, approximation1 = 'rectangle', intersection1 = 'all', exclusion1 = 'all')
-#' TestTwoApproxFpop(data = time_series, penalty = Penality, approximation1 = 'rectangle', intersection1 = 'last', exclusion1 = 'all')
-#' TestTwoApproxFpop(data = time_series, penalty = Penality, approximation1 = 'rectangle', intersection1 = 'random', exclusion1 = 'random', approximation2 = 'rectangle', intersection2 = 'last', exclusion2 = 'all')
-TestTwoApproxFpop <- function(data, penalty, approximation1 = "rectangle", intersection1 = "last", exclusion1 = "all", approximation2 = "rectangle", intersection2 = "empty", exclusion2 = "empty") {
-    .Call(`_FPOPapproximation_TestTwoApproxFpop`, data, penalty, approximation1, intersection1, exclusion1, approximation2, intersection2, exclusion2)
+#' TestTwoApproxFpop(data = time_series, penalty = Penality, approximation1 = 'rectangle', intersection1 = 'all', exclusion1 = 'all', str1 = "v")
+#' TestTwoApproxFpop(data = time_series, penalty = Penality, approximation1 = 'rectangle', intersection1 = 'last', exclusion1 = 'all', str1 = "v")
+#' TestTwoApproxFpop(data = time_series, penalty = Penality, approximation1 = 'rectangle', intersection1 = 'random', exclusion1 = 'random',  str1 = "v", approximation2 = 'rectangle', intersection2 = 'last', exclusion2 = 'all', str2 = "v")
+TestTwoApproxFpop <- function(data, penalty, approximation1 = "rectangle", intersection1 = "last", exclusion1 = "all", str1 = "v", approximation2 = "rectangle", intersection2 = "empty", exclusion2 = "empty", str2 = "v") {
+    .Call(`_FPOPapproximation_TestTwoApproxFpop`, data, penalty, approximation1, intersection1, exclusion1, str1, approximation2, intersection2, exclusion2, str2)
 }
 

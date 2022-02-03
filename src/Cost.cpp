@@ -1,5 +1,4 @@
 #include "Cost.h"
-
 #include <iostream>
 #include "math.h"
 #include <Rcpp.h>

@@ -1,7 +1,7 @@
 #include "pRectangle.h"
 #include "pSphere.h"
-#include "math.h"
-#include<iostream>
+//#include "math.h"
+//#include<iostream>
 #include <Rcpp.h>
 
 using namespace Rcpp;

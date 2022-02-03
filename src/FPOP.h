@@ -1,21 +1,30 @@
 #ifndef FPOP_H
 #define FPOP_H
-
-#include "Candidate_Ilast_Eall_sphere_1.h"
-#include "Candidate_Iall_Eall_2.h"
-#include "Candidate_Iall_Eempty_3.h"
-#include "Candidate_Iempty_Eall_4.h"
-#include "Candidate_Ilast_Eall_5.h"
-#include "Candidate_Ilast_Erandom_6.h"
-#include "Candidate_Iall_Erandom_7.h"
-#include "Candidate_Irandom_Erandom_8.h"
-#include "Candidate_Iempty_Eempty_9.h"
-#include "Candidate_Irandom_Eall_10.h"
-#include "Candidate_Irandom_Eall_sphere_11.h"
-#include "Candidate_Irandom_Erandom_sphere_12.h"
-#include "Candidate_Ilast_Erandom_sphere_13.h"
-#include "Candidate_Ilast_EallModif_14.h"
-#include "Candidate_Ilast_EallModif2_15.h"
+//PELT
+#include "Rec_Empty_Empty.h"//1.+
+//Approximation SPHERE-----
+#include "Sph_Last_lAll.h"//2.+
+#include "Sph_Last_vAll.h"//3.+
+#include "Sph_Rand_lAll.h"//4.+
+#include "Sph_Rand_vAll.h"//5.+
+#include "Sph_Last_lRand.h"//6.+
+#include "Sph_Last_vRand.h"//7.+
+#include "Sph_Rand_lRand.h"//8.+
+#include "Sph_Rand_vRand.h"//9.+
+//Approximation RECTANGLE-
+#include "Rec_All_Empty.h"//10.+
+#include "Rec_All_lAll.h"//11.+
+#include "Rec_All_vAll.h"//12.+
+#include "Rec_Last_lAll.h"//13.+
+#include "Rec_Last_vAll.h"//14.+
+#include "Rec_Rand_lAll.h"//15.+
+#include "Rec_Rand_vAll.h"//16.+
+#include "Rec_Last_lRand.h"//17.+
+#include "Rec_Last_vRand.h"//18.+
+#include "Rec_Rand_lRand.h"//19.+
+#include "Rec_Rand_vRand.h"//20.+
+#include "Rec_All_lRand.h"//21+
+#include "Rec_All_vRand.h"//22.+
 
 #include <Rcpp.h>
 #include "math.h"
@@ -37,9 +46,7 @@ private:
 
   double* VectOfCosts;                    //UnpenalizedCost = VectOfCosts[n] - Changes.size()*Penality
   unsigned int* LastChpt;       //vector of the best last changepoints
-  //
-  std::vector <unsigned int> NbOfCandidats;  //vector of the candidats number
-
+  std::vector <unsigned int> NbOfCandidats;
 public:
   FPOP<CandidateOfChange>() { }
 
@@ -66,19 +73,15 @@ public:
     Changes = candidate.Changes;
     SegmentMeans = candidate.SegmentMeans;
     UnpenalizedCost = candidate.UnpenalizedCost;
-    //
     NbOfCandidats = candidate.NbOfCandidats;
 
     VectOfCosts = new double[N + 1];
     LastChpt = new unsigned int[N];
-
     CumSumData = new double*[N + 1];
     CumSumData2 = new double*[N + 1];
 
     for (unsigned int i = 0; i < N + 1; i++) {
-
       VectOfCosts[i] = candidate.VectOfCosts[i];
-
       CumSumData[i] = new double[Dim];
       CumSumData2[i] = new double[Dim];
       for (unsigned int k = 0; k < Dim; k++) {
@@ -115,7 +118,6 @@ public:
   double GetPenality() const { return Penality; }
   double* GetVectOfCosts() const { return VectOfCosts; }
   unsigned int* GetLastChpt()  { return LastChpt; }
-  //
   std::vector <unsigned int> GetNbOfCandidats()  { return NbOfCandidats; }
 
   double** CalcCumSumData(Rcpp::NumericMatrix data) {
@@ -142,25 +144,12 @@ public:
     return(CumSumData2);
   }
 
-  void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool NbOfCands, bool NbOfExclus){
-    /*
-    //file initialisation for tests
-    std::ofstream FileNbCands;
-    std::ofstream FileNbExclus;
-     */
+  void algoFPOP(Rcpp::NumericMatrix data, int type_approx, bool NbOfCands){
     unsigned int RealNbExclus = 0;
     //
     if (!NbOfCands) {
-      NbOfCandidats.push_back(NULL);
+      NbOfCandidats.push_back(0);
     }
-    /*
-    if (NbOfCands == true) {
-      FileNbCands.open("NbOfCands.txt", ios_base::trunc);
-    }
-    if (NbOfExclus == true) {
-      FileNbExclus.open("NbOfExclus.txt", ios_base::trunc);
-    }
-    */
     VectOfCosts[0] = 0;
     CumSumData = CalcCumSumData(data);
     CumSumData2 = CalcCumSumData2(data);
@@ -174,7 +163,7 @@ public:
     unsigned int u;
     //Algorithm-----------------------------------------------------------------
     for (unsigned int t = 0; t < N; t++) {
-      cost.InitialCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts); // Guillem : a link to CumSumData ? check in cost object (cost.h)
+      cost.InitialCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts);
       min_val = cost.get_min();                       //min value of cost
       tau = t;                                 //best last position
       //First run: searching min
@@ -207,17 +196,7 @@ public:
       unsigned int SizeVectLink = VectLinkToCandidates.size();
       for (unsigned int IndexOfCandVectLink = 0; IndexOfCandVectLink < SizeVectLink; IndexOfCandVectLink++) {
         VectLinkToCandidates[IndexOfCandVectLink] -> UpdateOfCandidate(IndexOfCandVectLink,VectLinkToCandidates, RealNbExclus);
-/*        if (NbOfExclus) {
-          FileNbExclus << VectLinkToCandidates[IndexOfCandVectLink] -> GetTau() << " " << RealNbExclus << " ";
-        }
- */
       }
-
-/*
-      if (NbOfExclus) {
-        FileNbExclus << "\n";
-      }
- */
       //Remove empty candidates
       typename std::list<CandidateOfChange>::iterator it_candidate = ListOfCandidates.begin();
       while (it_candidate != ListOfCandidates.end()) {
@@ -227,26 +206,10 @@ public:
         }
         ++it_candidate;
       }
-      //fixe nb_cands
-      /*
-      if (NbOfCands) {
-        FileNbCands << VectLinkToCandidates.size() << " ";
-      }
-       */
       if (NbOfCands) {
         NbOfCandidats.push_back(VectLinkToCandidates.size());
       }
     }
-    /*
-    //close file
-    if (NbOfCands) {
-      FileNbCands << "\n";
-      FileNbCands.close();
-    }
-    if (NbOfExclus) {
-      FileNbExclus.close();
-    }
-     */
     //Result
     //vector of Changes
     unsigned int chp = N;
@@ -255,8 +218,6 @@ public:
       chp = LastChpt[chp-1];
     }
     Changes.push_back(0);
-
-    ///
     unsigned int j = 1;
     std::vector<double> MeanOneSegment;
     chp = N - 1;
