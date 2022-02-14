@@ -25,6 +25,9 @@
 #include "Rec_Rand_vRand.h"//20.+
 #include "Rec_All_lRand.h"//21+
 #include "Rec_All_vRand.h"//22.+
+//double exclusion
+#include "Rec_Last_vDoubleAll.h"//23
+#include "Rec_Last_vThreeAll.h"//24
 
 #include <Rcpp.h>
 #include "math.h"

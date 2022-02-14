@@ -17,6 +17,9 @@ int NmbOfapproxFPOP(std::string approximation, std::string intersection,  std::s
     if (intersection == "last" ) {
       if (exclusion == "all") { if (str == "l") { type_approx = 13; } else { type_approx = 14; } }
       if (exclusion == "random") { if (str == "l") { type_approx = 17; } else { type_approx = 18; } }
+      //double
+      if (exclusion == "doubleall") {  type_approx = 23;}
+      if (exclusion == "threeall") {  type_approx = 24;}
     }
     if (intersection == "random")  {
       if (exclusion == "random") { if (str == "l") { type_approx = 19; } else { type_approx = 20; } }
@@ -125,6 +128,14 @@ bool TestOfComparisonTwoFPOP(Rcpp::NumericMatrix data, double penalty, unsigned 
     res =  X.TestFPOP(UnpenalizedCost1, LastChpt1);
   } else if (type_approx2 == 22) {
     FPOP<Rec_All_vRand> X = FPOP<Rec_All_vRand>(data, penalty);
+    X.algoFPOP(data, type_approx2, false);
+    res =  X.TestFPOP(UnpenalizedCost1, LastChpt1);
+  } else if (type_approx2 == 23) {
+    FPOP<Rec_Last_vDoubleAll> X = FPOP<Rec_Last_vDoubleAll>(data, penalty);
+    X.algoFPOP(data, type_approx2, false);
+    res =  X.TestFPOP(UnpenalizedCost1, LastChpt1);
+  } else if (type_approx2 == 24) {
+    FPOP<Rec_Last_vThreeAll> X = FPOP<Rec_Last_vThreeAll>(data, penalty);
     X.algoFPOP(data, type_approx2, false);
     res =  X.TestFPOP(UnpenalizedCost1, LastChpt1);
   }
@@ -262,6 +273,14 @@ List approxFpop(Rcpp::NumericMatrix data, double penalty, std::string approximat
     FPOP<Rec_All_vRand> X = FPOP<Rec_All_vRand>(data, penalty);
     X.algoFPOP(data, type_approx, NbOfCands);
     res = X.ResAlgoFPOP();
+  } else if (type_approx == 23) {
+    FPOP<Rec_Last_vDoubleAll> X = FPOP<Rec_Last_vDoubleAll>(data, penalty);
+    X.algoFPOP(data, type_approx, NbOfCands);
+    res = X.ResAlgoFPOP();
+  }else if (type_approx == 24) {
+    FPOP<Rec_Last_vThreeAll> X = FPOP<Rec_Last_vThreeAll>(data, penalty);
+    X.algoFPOP(data, type_approx, NbOfCands);
+    res = X.ResAlgoFPOP();
   }
   return res;
 }
@@ -390,11 +409,11 @@ bool TestTwoApproxFpop(Rcpp::NumericMatrix data, double penalty, std::string app
     FPOP<Rec_Last_vRand> X1 = FPOP<Rec_Last_vRand>(data, penalty);
     X1.algoFPOP(data, type_approx1, false );
     res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
-  } /*else if (type_approx1 == 19) {
+  } else if (type_approx1 == 19) {
     FPOP<Rec_Rand_lRand> X1 = FPOP<Rec_Rand_lRand>(data, penalty);
     X1.algoFPOP(data, type_approx1, false );
     res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
-  }*/ else if (type_approx1 == 20) {
+  } else if (type_approx1 == 20) {
     FPOP<Rec_Rand_vRand> X1 = FPOP<Rec_Rand_vRand>(data, penalty);
     X1.algoFPOP(data, type_approx1, false );
     res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
@@ -404,6 +423,14 @@ bool TestTwoApproxFpop(Rcpp::NumericMatrix data, double penalty, std::string app
     res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
   } else if (type_approx1 == 22) {
     FPOP<Rec_All_vRand> X1 = FPOP<Rec_All_vRand>(data, penalty);
+    X1.algoFPOP(data, type_approx1, false );
+    res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
+  } else if (type_approx1 == 23) {
+    FPOP<Rec_Last_vDoubleAll> X1 = FPOP<Rec_Last_vDoubleAll>(data, penalty);
+    X1.algoFPOP(data, type_approx1, false );
+    res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
+  }else if (type_approx1 == 24) {
+    FPOP<Rec_Last_vThreeAll> X1 = FPOP<Rec_Last_vThreeAll>(data, penalty);
     X1.algoFPOP(data, type_approx1, false );
     res = TestOfComparisonTwoFPOP(data,penalty, type_approx2, X1.GetUnpenalizedCost(), X1.GetLastChpt());
   }
