@@ -38,7 +38,7 @@ double* pSphere::get_c() const { return c; }
 //tools-------------------------------------------------------------------------
 double pSphere::get_dist(double* pnt1, double* pnt2) {
   double res = 0;
-  for (unsigned int k = 0; k < 2; k++) {
+  for (unsigned int k = 0; k < p; k++) {
     res = res + (pnt2[k] - pnt1[k]) * (pnt2[k] - pnt1[k]);
   }
   return sqrt(res);
