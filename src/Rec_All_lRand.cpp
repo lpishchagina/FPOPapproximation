@@ -48,8 +48,6 @@ void Rec_All_lRand::idCandidate(unsigned int dim, unsigned int t, double** &csy,
 }
 
 void Rec_All_lRand::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_All_lRand>::iterator> &vectlinktocands, unsigned int &RealNbExclus) {
-  std::list<pSphere> spheresAfter;
-  typename std::list<pSphere>::reverse_iterator riter;
   pSphere sphere = pSphere(p);
   //labels of the elements from exclusion set
   if (flCreate) {//flCreate = true =>1 iteration : create labels of the elements from exclusion set
@@ -60,21 +58,17 @@ void Rec_All_lRand::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::ve
       }
     }
   }
-  //intersection set:
-  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
+  //intersection approximation    //intersection set:
+  for (int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
     sphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
     if (sphere.get_r()  == 0) {
       rectangle -> DoEmptyRect();
       return;
     }     //pelt
-    spheresAfter.push_back(sphere);
-  }
-  //intersection approximation
-  riter = spheresAfter.rbegin();
-  while (riter != (spheresAfter.rend())) {
-    rectangle -> IntersectionSphere(*riter);
-    if (rectangle -> IsEmptyRect()) { return; }
-    ++riter;
+    rectangle -> IntersectionSphere(sphere);
+    if (rectangle -> IsEmptyRect()) {
+      return;
+    }
   }
   //exclusion approximation with one random sphere from exclusion set :
   if ((!rectangle->IsEmptyRect()) && (indexSpheresBefore.size() > 0)) {

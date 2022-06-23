@@ -44,11 +44,8 @@ void Rec_All_lAll::idCandidate(unsigned int dim, unsigned int t, double** &csy, 
   flCreate = true;
 }
 
-
 void Rec_All_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_All_lAll>::iterator> &vectlinktocands, unsigned int &RealNbExclus) {
-  std::list<pSphere> spheresAfter;
   std::list<pSphere>::iterator iter;
-  typename std::list<pSphere>::reverse_iterator riter;
   pSphere sphere = pSphere(p);
   //exclusion set
   if (flCreate) {//flCreate = true =>1 iteration : Creation of spheresBefore
@@ -60,23 +57,17 @@ void Rec_All_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vec
       }
     }
   }
-  //intersection set:
-  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
+  //intersection approximation    //intersection set:
+  for (int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
     sphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
     if (sphere.get_r()  == 0) {
       rectangle -> DoEmptyRect();
       return;
     }     //pelt
-    spheresAfter.push_back(sphere);
-  }
-  //intersection approximation
-  riter = spheresAfter.rbegin();
-  while (riter != (spheresAfter.rend())) {
-    rectangle -> IntersectionSphere(*riter);
+    rectangle -> IntersectionSphere(sphere);
     if (rectangle -> IsEmptyRect()) {
       return;
     }
-    ++riter;
   }
   //exclusion approximation:
   if ((spheresBefore.size() > 0) && (!rectangle -> IsEmptyRect())) {

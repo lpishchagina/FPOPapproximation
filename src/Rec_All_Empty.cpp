@@ -31,26 +31,18 @@ void Rec_All_Empty::idCandidate(unsigned int dim, unsigned int t, double** &csy,
 }
 
 void Rec_All_Empty::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_All_Empty>::iterator> &vectlinktocands, unsigned int &RealNbExclus) {
-  std::list<pSphere> spheresAfter;
-  typename std::list<pSphere>::reverse_iterator riter;
   pSphere sphere = pSphere(p);
-  //intersection set:
-  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
+  //intersection approximation    //intersection set:
+  for (int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
     sphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
     if (sphere.get_r()  == 0) {
       rectangle -> DoEmptyRect();
       return;
     }     //pelt
-    spheresAfter.push_back(sphere);
-  }
-  //intersection approximation
-  riter = spheresAfter.rbegin();
-  while (riter != (spheresAfter.rend())) {
-    rectangle -> IntersectionSphere(*riter);
+    rectangle -> IntersectionSphere(sphere);
     if (rectangle -> IsEmptyRect()) {
       return;
     }
-    ++riter;
   }
 }
 //----------------------------------------------------------------------------//
