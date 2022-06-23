@@ -45,33 +45,26 @@ void Sph_Last_lAll::idCandidate(unsigned  int dim, unsigned int t, double** &csy
 }
 
 void Sph_Last_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Sph_Last_lAll>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
-  std::list<pSphere> spheresAfter;
   std::list<pSphere>::iterator iter;
-  std::list<pSphere>::reverse_iterator riter;
   pSphere sphere = pSphere(p);
   pSphere testSphere = pSphere(p);
-  //last sphere
-  sphere.createSphere(p, tau, vectlinktocands[vectlinktocands.size() - 1] -> get_tau(), csY, csY2, locCosts);
-  if (sphere.get_r() == 0) {
-    fl_empty = true;
-    return;
-  }//pelt
   //exclusion set
   if (flCreate) { //flCreate = true =>1 iteration : Creation of spheresBefore
     flCreate = false;
     if (IndexToLinkOfUpdCand > 0) {
       for (unsigned int i = 0; i < IndexToLinkOfUpdCand; i++) {
         testSphere.createSphere(p, vectlinktocands[i] -> get_tau(), tau-1, csY, csY2, locCosts);
-        if ((testSphere.get_r() == 0) || (sphere.isInclusion(testSphere))) {
-          fl_empty = true;
-          return;
-        }
         spheresBefore.push_back(testSphere);
       }
     }
   }
+  sphere.createSphere(p, tau, vectlinktocands[vectlinktocands.size() - 1] -> get_tau(), csY, csY2, locCosts);
+  if (sphere.get_r() == 0) {
+    fl_empty = true;
+    return;
+  }//pelt
   //spheres (check exclusion)
-  if ((spheresBefore.size() > 0) && (!flCreate))  {
+  if (spheresBefore.size() > 0)   {
     iter = spheresBefore.begin();
     while (iter != spheresBefore.end()) {
       if (sphere.isInclusion(*iter)) {
@@ -85,14 +78,13 @@ void Sph_Last_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::ve
     }
   }
   //spheres (check intersection)
-  if (IndexToLinkOfUpdCand < (vectlinktocands.size() - 1)) {
-    for (int i = IndexToLinkOfUpdCand; i < (vectlinktocands.size() - 1); i++) {
+  unsigned int end = vectlinktocands.size() - 1;
+  for (int i = IndexToLinkOfUpdCand; i < end; i++) {
       testSphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
       if ((testSphere.get_r()  == 0) || (sphere.isnotIntersection(testSphere))) {
         rectangle -> DoEmptyRect();
         return;
       }
-    }
   }
 }
 //----------------------------------------------------------------------------//
