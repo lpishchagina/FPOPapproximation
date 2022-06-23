@@ -1,36 +1,41 @@
 #ifndef FPOP_H
 #define FPOP_H
 //PELT
-#include "Rec_Empty_Empty.h"//1.+
+#include "Rec_Empty_Empty.h"//1. PELT
 //Approximation SPHERE-----
 #include "Sph_Last_lAll.h"//2.+
-#include "Sph_Last_vAll.h"//3.+
-#include "Sph_Rand_lAll.h"//4.+
-#include "Sph_Rand_vAll.h"//5.+
-#include "Sph_Last_lRand.h"//6.+
-#include "Sph_Last_vRand.h"//7.+
-#include "Sph_Rand_lRand.h"//8.+
-#include "Sph_Rand_vRand.h"//9.+
 //Approximation RECTANGLE-
 #include "Rec_All_Empty.h"//10.+
 #include "Rec_All_lAll.h"//11.+
-#include "Rec_All_vAll.h"//12.+
 #include "Rec_Last_lAll.h"//13.+
-#include "Rec_Last_vAll.h"//14.+
 #include "Rec_Rand_lAll.h"//15.+
-#include "Rec_Rand_vAll.h"//16.+
 #include "Rec_Last_lRand.h"//17.+
-#include "Rec_Last_vRand.h"//18.+
 #include "Rec_Rand_lRand.h"//19.+
-#include "Rec_Rand_vRand.h"//20.+
 #include "Rec_All_lRand.h"//21+
-#include "Rec_All_vRand.h"//22.+
-//double exclusion
-#include "Rec_Last_vDoubleAll.h"//23
-#include "Rec_Last_vThreeAll.h"//24
 
 #include <Rcpp.h>
 #include "math.h"
+/*+++
+class FPOP
+ -------------------------------------------------------------------------------
+ Description:
+ Geometric FPOP
+
+ Parameters:
+ "N"- lenght of data;
+ "Dim" - dimension;
+ "Penalty" - value of penalty;
+ "CumSumData" - cumsum of data;;
+ "CumSumData2" - cumsum data^2;
+ "Changes" - change-points;
+ "SegmentMeans" - values of means for each segment;
+ "UnpenalizedCost" - global cost;
+ "VectOfCosts" - local costs;
+ "LastChpt" - vector of the best last changepoints;
+ "NbOfCandidats" - number of candidates at each iteration;
+  Remark : UnpenalizedCost = VectOfCosts[n] - Changes.size()*Penalty
+  -------------------------------------------------------------------------------
+ */
 
 using namespace Rcpp;
 using namespace std;
@@ -40,23 +45,23 @@ class FPOP {
 private:
   unsigned int N;
   unsigned int Dim;
-  double Penality;
+  double Penalty;
   double** CumSumData;
   double** CumSumData2;
   std::vector <unsigned int> Changes;
   std::vector <std::vector <double>> SegmentMeans;
   double UnpenalizedCost;
 
-  double* VectOfCosts;                    //UnpenalizedCost = VectOfCosts[n] - Changes.size()*Penality
+  double* VectOfCosts;          //UnpenalizedCost = VectOfCosts[n] - Changes.size()*Penalty
   unsigned int* LastChpt;       //vector of the best last changepoints
   std::vector <unsigned int> NbOfCandidats;
 public:
   FPOP<CandidateOfChange>() { }
 
-  FPOP<CandidateOfChange> (Rcpp::NumericMatrix data, double penality) {
+  FPOP<CandidateOfChange> (Rcpp::NumericMatrix data, double penalty) {
     Dim  = (unsigned int)data.nrow();
     N = (unsigned int)data.ncol();
-    Penality = penality;
+    Penalty = penalty;
 
     VectOfCosts = new double[N + 1];
     LastChpt = new unsigned int[N];
@@ -72,7 +77,7 @@ public:
   FPOP<CandidateOfChange> (const FPOP<CandidateOfChange> &candidate) {
     Dim  = candidate.Dim;
     N = candidate.N;
-    Penality = candidate.Penality;
+    Penalty = candidate.Penalty;
     Changes = candidate.Changes;
     SegmentMeans = candidate.SegmentMeans;
     UnpenalizedCost = candidate.UnpenalizedCost;
@@ -118,7 +123,7 @@ public:
   double GetUnpenalizedCost() const { return UnpenalizedCost; }
   unsigned int GetN() const { return N; }
   unsigned int GetDim() const { return Dim; }
-  double GetPenality() const { return Penality; }
+  double GetPenalty() const { return Penalty; }
   double* GetVectOfCosts() const { return VectOfCosts; }
   unsigned int* GetLastChpt()  { return LastChpt; }
   std::vector <unsigned int> GetNbOfCandidats()  { return NbOfCandidats; }
@@ -157,8 +162,7 @@ public:
     CumSumData = CalcCumSumData(data);
     CumSumData2 = CalcCumSumData2(data);
     CandidateOfChange candidate = CandidateOfChange(Dim);
-    pSphere disk = pSphere(Dim);
-    Cost cost = Cost(Dim);
+    pCost cost = pCost(Dim);
     std::list<CandidateOfChange> ListOfCandidates;                     // list of active geometries
     std::vector< typename std::list<CandidateOfChange>::iterator> VectLinkToCandidates ;
     double min_val;
@@ -166,14 +170,14 @@ public:
     unsigned int u;
     //Algorithm-----------------------------------------------------------------
     for (unsigned int t = 0; t < N; t++) {
-      cost.InitialCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts);
+      cost.idpCost(Dim, t, t, CumSumData, CumSumData2, VectOfCosts);
       min_val = cost.get_min();                       //min value of cost
       tau = t;                                 //best last position
       //First run: searching min
       typename std::list<CandidateOfChange>::reverse_iterator rit_candidate = ListOfCandidates.rbegin();
       while (rit_candidate != ListOfCandidates.rend()) {
-        u = rit_candidate -> GetTau();
-        cost.InitialCost(Dim, u, t, CumSumData, CumSumData2, VectOfCosts);
+        u = rit_candidate -> get_tau();
+        cost.idpCost(Dim, u, t, CumSumData, CumSumData2, VectOfCosts);
         if (min_val >= cost.get_min()) {
           min_val = cost.get_min();
           tau = u;
@@ -181,10 +185,10 @@ public:
         ++rit_candidate;
       }
       //new min, best last changepoint and SegmentMeans--------------------------------
-      VectOfCosts[t + 1] = min_val + Penality;
+      VectOfCosts[t + 1] = min_val + Penalty;
       LastChpt[t] = tau;
       //Candidate of Change.Initialisation.
-      candidate.InitialOfCandidate(t, CumSumData, CumSumData2, VectOfCosts);
+      candidate.idCandidate(Dim, t, CumSumData, CumSumData2, VectOfCosts);
       ListOfCandidates.push_back(candidate);
 
       //Generate vector of link
@@ -238,7 +242,7 @@ public:
     reverse(Changes.begin(), Changes.end());
     Changes.pop_back();//remove N
 
-    UnpenalizedCost = VectOfCosts[N] - Penality * (Changes.size());
+    UnpenalizedCost = VectOfCosts[N] - Penalty * (Changes.size());
   }
 
   List ResAlgoFPOP(){

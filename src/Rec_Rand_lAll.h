@@ -2,36 +2,53 @@
 #define REC_RAND_LALL_H
 
 #include "pRectangle.h"
-#include "Cost.h"
 #include <vector>
 #include <list>
 #include <iterator>
 #include <stdio.h>
+
+/*+++
+ Class Rec_Rand_lAll
+ -------------------------------------------------------------------------------
+ Description:
+ Rectangular approximation (Zone = AI(ramdom sphere from intersection set) + AE(all))
+
+ Parameters:
+ "p" - dimension;
+ "tau" - change-point candidate;
+ "csY" - cumsum of data;
+ "csY2" - cumsum data^2;
+ "locCosts" - min value of costs
+ "rectangle" - approximation zone
+ "spheresBefore" - exclusion set;
+ "flCreate" - indicator, if "true" => new change-point candidate => create labels of the elements from exclusion set
+ -------------------------------------------------------------------------------
+ */
 class Rec_Rand_lAll {
 private:
-  unsigned int Dim;
-  unsigned int Tau;
-  pRectangle* Rect;
-  double** CumSumData;
-  double** CumSumData2;
-  double* VectOfCosts;
-  std::list<pSphere> DiskListBefore;
-  bool CreationFl;
+  unsigned int p;
+  unsigned int tau;
+  pRectangle* rectangle;
+  double** csY;
+  double** csY2;
+  double* locCosts;
+  std::list<pSphere> spheresBefore;
+  bool flCreate;
 
 public:
-  Rec_Rand_lAll(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) {}
-  Rec_Rand_lAll(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)),  CumSumData(NULL),CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) {}
-  Rec_Rand_lAll(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) {}
+  Rec_Rand_lAll(): p(0), tau(0), rectangle(0), csY(NULL), csY2(NULL), locCosts(NULL), flCreate(true) {}
+  Rec_Rand_lAll(unsigned  int dim): p(dim), tau(0), rectangle(new pRectangle(dim)),  csY(NULL),csY2(NULL), locCosts(NULL), flCreate(true) {}
+  Rec_Rand_lAll(unsigned int dim, unsigned int t): p(dim), tau(t), rectangle(new pRectangle(dim)), csY(NULL), csY2(NULL), locCosts(NULL), flCreate(true) {}
   Rec_Rand_lAll(const Rec_Rand_lAll & candidate);
   ~Rec_Rand_lAll();
 
+  std::list<pSphere> get_spheresBefore() const;
+  unsigned int get_tau()const;
+
   int get_Number(int N);
-  double Dist(double* a, double*b);
-  std::list<pSphere> GetDiskListBefore() const;
-  unsigned int GetTau()const;
-  void CleanOfCandidate();
+  double get_dist(double* pnt1, double* pnt2);
   bool EmptyOfCandidate();
-  void InitialOfCandidate(unsigned int tau, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
+  void idCandidate(unsigned int dim, unsigned int t, double** &csy, double** &csy2, double* &loccosts);
   void UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_Rand_lAll>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
-};
+  };
 #endif // REC_RAND_LALL_H

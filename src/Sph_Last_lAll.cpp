@@ -4,89 +4,99 @@
 using namespace Rcpp;
 using namespace std;
 
+//constructor copy, destructor--------------------------------------------------
 Sph_Last_lAll::Sph_Last_lAll(const Sph_Last_lAll & candidate) {
-  Dim = candidate.Dim;
-  Tau = candidate.Tau;
-  CumSumData = candidate.CumSumData;
-  CumSumData2 = candidate.CumSumData2;
-  VectOfCosts = candidate.VectOfCosts;
+  p = candidate.p;
+  tau = candidate.tau;
+  csY = candidate.csY;
+  csY2 = candidate.csY2;
+  locCosts = candidate.locCosts;
   fl_empty = candidate.fl_empty;
-  DiskListBefore.clear();
-  DiskListBefore = candidate.DiskListBefore;
-  CreationFl = candidate.CreationFl;
+  spheresBefore.clear();
+  spheresBefore = candidate.spheresBefore;
+  flCreate = candidate.flCreate;
 }
 
-Sph_Last_lAll::~Sph_Last_lAll() { CumSumData = NULL; CumSumData2 = NULL;  VectOfCosts = NULL; }
+Sph_Last_lAll::~Sph_Last_lAll() { csY = NULL; csY2 = NULL;  locCosts = NULL; }
 
-unsigned int Sph_Last_lAll::GetTau()const { return Tau; }
+//accessory---------------------------------------------------------------------
+unsigned int Sph_Last_lAll::get_tau() const { return tau; }
 
-double Sph_Last_lAll::Dist(double* a, double*b) {
-  double dist = 0;
-  for (unsigned int k = 0; k < Dim; k++) { dist = dist + (a[k] - b[k])*(a[k] - b[k]); }
-  return sqrt(dist);
+//tools-------------------------------------------------------------------------
+double Sph_Last_lAll::get_dist(double* pnt1, double* pnt2) {
+  double res = 0;
+  for (unsigned int k = 0; k < p; k++) {
+    res = res + (pnt2[k] - pnt1[k]) * (pnt2[k] - pnt1[k]);
+  }
+  return sqrt(res);
 }
-
-void Sph_Last_lAll::CleanOfCandidate() { CumSumData = NULL;  VectOfCosts = NULL; }
 
 bool Sph_Last_lAll::EmptyOfCandidate() { return fl_empty; }
 
-void Sph_Last_lAll::InitialOfCandidate(unsigned int tau, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts) {
-  Tau = tau;
-  CumSumData = cumsumdata;
-  CumSumData2 = cumsumdata2;
-  VectOfCosts = vectofcosts;
+void Sph_Last_lAll::idCandidate(unsigned  int dim, unsigned int t, double** &csy, double** &csy2, double* &loccosts) {
+  p = dim;
+  tau = t;
+  csY = csy;
+  csY2 = csy2;
+  locCosts = loccosts;
   fl_empty = false;
-  DiskListBefore.clear();
-  CreationFl = true;
+  flCreate = true;
+  spheresBefore.clear();
 }
 
 void Sph_Last_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Sph_Last_lAll>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
-  fl_empty = false;
-  RealNbExclus = 0;
-  Cost cost = Cost(Dim);
-  unsigned int j = vectlinktocands[vectlinktocands.size() - 1] -> GetTau();
-  cost.InitialCost(Dim, Tau, j, CumSumData, CumSumData2, VectOfCosts);
-  double Radius2 = (VectOfCosts[j + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
-
-  if (Radius2 < 0) { fl_empty = true; return;}   //pelt
-
-  pSphere Disk_TauLastT = pSphere(Dim);
-  Disk_TauLastT.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-  double dist;
-  //CreationFl = true =>1 iteration : Creation of DiskListBefore
-  if (CreationFl) {
-    CreationFl = false;
+  std::list<pSphere> spheresAfter;
+  std::list<pSphere>::iterator iter;
+  typename std::list<pSphere>::reverse_iterator riter;
+  pSphere sphere = pSphere(p);
+  //exclusion set
+  if (flCreate) { //flCreate = true =>1 iteration : Creation of spheresBefore
+    flCreate = false;
     if (IndexToLinkOfUpdCand > 0) {
-      pSphere DiskTau_1 = pSphere(Dim);
       for (unsigned int i = 0; i < IndexToLinkOfUpdCand; i++) {
-        j = vectlinktocands[i] -> GetTau();
-        cost.InitialCost(Dim, j, Tau-1, CumSumData, CumSumData2, VectOfCosts);
-        Radius2 = (VectOfCosts[Tau] - VectOfCosts[j] - cost.get_coef_Var()) / cost.get_coef();
-        DiskTau_1.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-        /*//check for 1 iteration: inclusion
-        dist = Dist(Disk_TauLastT.get_center(), DiskTau_1.get_center());
-        if (dist < (DiskTau_1.get_radius() + Disk_TauLastT.get_radius())) {
-          if (dist <= (DiskTau_1.get_radius() - Disk_TauLastT.get_radius())) { fl_empty = true; return; }
-        }*/
-        DiskListBefore.push_back(DiskTau_1);
+        sphere.createSphere(p, vectlinktocands[i] -> get_tau(), tau-1, csY, csY2, locCosts);
+        if (sphere.get_r() == 0) {
+          fl_empty = true;
+          return;
+        }
+        spheresBefore.push_back(sphere);
       }
     }
   }
-  //inclusion :
-  if ((!fl_empty) && (DiskListBefore.size() > 0)) {
-    std::list<pSphere>::iterator iter = DiskListBefore.begin();
-    while( iter != DiskListBefore.end()){
-      dist = Dist(Disk_TauLastT.get_center(),(*iter).get_center());
-      if (dist < ((*iter).get_radius() + Disk_TauLastT.get_radius())){
-        if (dist <= ((*iter).get_radius() - Disk_TauLastT.get_radius())){
-          fl_empty = true;
-          return;
-        } else {
-          ++iter;
-        }
+  //intersection set
+  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
+    sphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
+    if (sphere.get_r() == 0) { //pelt
+      fl_empty = true;
+      return;
+      }
+    spheresAfter.push_back(sphere);
+  }
+  //spheres (check exclusion)
+  if (spheresBefore.size() > 0) {
+    iter = spheresBefore.begin();
+    while (iter != spheresBefore.end()) {
+      if (sphere.isInclusion(*iter)) {
+        fl_empty = true;
+        return;
+      } else if (sphere.isnotIntersection(*iter)) {
+        iter = spheresBefore.erase(iter);
       } else {
-        iter = DiskListBefore.erase(iter);
+        ++iter;
+      }
+    }
+  }
+  //spheres (check intersection)
+  if (spheresAfter.size() > 1) {
+    riter = spheresAfter.rbegin();
+    iter++;
+    while (riter != (spheresAfter.rend())) {
+      if (sphere.isnotIntersection(*riter)) {
+        fl_empty = true; return;
+      } else {
+        ++riter;
       }
     }
   }
 }
+//----------------------------------------------------------------------------//

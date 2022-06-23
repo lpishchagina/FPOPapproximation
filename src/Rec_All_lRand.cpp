@@ -3,19 +3,31 @@
 using namespace Rcpp;
 using namespace std;
 
+//constructor copy, destructor--------------------------------------------------
 Rec_All_lRand::Rec_All_lRand(const Rec_All_lRand & candidate) {
-  Dim = candidate.Dim;
-  Tau = candidate.Tau;
-  Rect = new pRectangle(Dim);
-  CumSumData = candidate.CumSumData;
-  CumSumData2 = candidate.CumSumData2;
-  VectOfCosts = candidate.VectOfCosts;
-  IndexVectBefore.clear();
-  IndexVectBefore = candidate.IndexVectBefore;
-  CreationFl = candidate.CreationFl;
+  p = candidate.p;
+  tau = candidate.tau;
+  rectangle = new pRectangle(p);
+  csY = candidate.csY;
+  csY2 = candidate.csY2;
+  locCosts = candidate.locCosts;
+  indexSpheresBefore = candidate.indexSpheresBefore;
+  flCreate = candidate.flCreate;
 }
 
-Rec_All_lRand::~Rec_All_lRand() { delete Rect;  CumSumData = NULL;  CumSumData2 = NULL;  VectOfCosts = NULL; }
+Rec_All_lRand::~Rec_All_lRand() { delete rectangle;  csY = NULL; csY2 = NULL; locCosts = NULL; }
+
+//accessory---------------------------------------------------------------------
+unsigned int Rec_All_lRand::get_tau() const { return tau; }
+
+//tools-------------------------------------------------------------------------
+double Rec_All_lRand::get_dist(double* pnt1, double* pnt2) {
+  double res = 0;
+  for (unsigned int k = 0; k < p; k++) {
+    res = res + (pnt2[k] - pnt1[k]) * (pnt2[k] - pnt1[k]);
+  }
+  return sqrt(res);
+}
 
 int Rec_All_lRand::get_Number(int N) {
   srand(time(NULL));
@@ -23,64 +35,59 @@ int Rec_All_lRand::get_Number(int N) {
   return res;
 }
 
-unsigned int Rec_All_lRand::GetTau()const { return Tau; }
-void Rec_All_lRand::CleanOfCandidate() { CumSumData = NULL; CumSumData2 = NULL;  VectOfCosts = NULL; }
-bool Rec_All_lRand::EmptyOfCandidate() { return Rect -> IsEmpty_rect(); }
+bool Rec_All_lRand::EmptyOfCandidate() { return rectangle -> IsEmptyRect(); }
 
-void Rec_All_lRand::InitialOfCandidate(unsigned int tau, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts) {
-  Tau = tau;
-  CumSumData = cumsumdata;
-  CumSumData2 = cumsumdata2;
-  VectOfCosts = vectofcosts;
-  CreationFl = true;
-  IndexVectBefore.clear();
+void Rec_All_lRand::idCandidate(unsigned int dim, unsigned int t, double** &csy, double** &csy2, double* &loccosts) {
+  p = dim;
+  tau = t;
+  csY = csy;
+  csY2 = csy2;
+  locCosts = loccosts;
+  indexSpheresBefore.clear();
+  flCreate = true;
 }
 
-void Rec_All_lRand::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_All_lRand>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
-  RealNbExclus = 0;
-  double Radius2;
-  pSphere Disk = pSphere(Dim);
-  Cost cost = Cost(Dim);
-  unsigned int j;
-  //intersection :
-  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
-    j = vectlinktocands[i] -> GetTau();
-    cost.InitialCost(Dim, Tau, j, CumSumData, CumSumData2, VectOfCosts);
-    Radius2 = (VectOfCosts[j + 1] - VectOfCosts[Tau] - cost.get_coef_Var())/cost.get_coef();
-
-    if (Radius2 < 0) { Rect -> DoEmpty_rect(); return; } //pelt
-
-    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-    Rect -> Intersection_disk(Disk);
-    if (Rect -> IsEmpty_rect()) { return; }
-  }
-
-  //CreationFl = true =>1 iteration : Creation of IndexVectBefore
-  if (CreationFl) {
-    CreationFl = false;
+void Rec_All_lRand::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_All_lRand>::iterator> &vectlinktocands, unsigned int &RealNbExclus) {
+  std::list<pSphere> spheresAfter;
+  typename std::list<pSphere>::reverse_iterator riter;
+  pSphere sphere = pSphere(p);
+  //labels of the elements from exclusion set
+  if (flCreate) {//flCreate = true =>1 iteration : create labels of the elements from exclusion set
+    flCreate = false;
     if (IndexToLinkOfUpdCand > 0) {
       for (unsigned int i = 0; i < IndexToLinkOfUpdCand; i++) {
-        IndexVectBefore.push_back(vectlinktocands[i] -> GetTau());
+        indexSpheresBefore.push_back(vectlinktocands[i] -> get_tau());
       }
     }
   }
-  //exclusion :
-  if ((!Rect->IsEmpty_rect()) && (IndexVectBefore.size() > 0)) {
-    unsigned int IndexRandBeforeTau = get_Number(IndexVectBefore.size()) - 1;
-    j = IndexVectBefore[IndexRandBeforeTau];
-    cost.InitialCost(Dim, j, Tau-1, CumSumData, CumSumData2, VectOfCosts);
-    Radius2 = (VectOfCosts[Tau] - VectOfCosts[j] - cost.get_coef_Var()) / cost.get_coef();
-    Disk.InitialpSphere(Dim, cost.get_mu(), sqrt(Radius2));
-
-    if (!Rect -> EmptyIntersection(Disk)) {
-      Rect -> Exclusion_disk(Disk);
+  //intersection set:
+  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
+    sphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
+    if (sphere.get_r()  == 0) {
+      rectangle -> DoEmptyRect();
+      return;
+    }     //pelt
+    spheresAfter.push_back(sphere);
+  }
+  //intersection approximation
+  riter = spheresAfter.rbegin();
+  while (riter != (spheresAfter.rend())) {
+    rectangle -> IntersectionSphere(*riter);
+    if (rectangle -> IsEmptyRect()) { return; }
+    ++riter;
+  }
+  //exclusion approximation with one random sphere from exclusion set :
+  if ((!rectangle->IsEmptyRect()) && (indexSpheresBefore.size() > 0)) {
+    unsigned int IndexRandBeforeTau = get_Number(indexSpheresBefore.size()) - 1;
+    sphere.createSphere(p, indexSpheresBefore[IndexRandBeforeTau],  tau-1, csY, csY2, locCosts);
+    if (!rectangle -> EmptyIntersection(sphere)) {
+      rectangle -> ExclusionSphere(sphere);
     } else {
-      if (IndexRandBeforeTau < (IndexVectBefore.size() -1 )) {
-        IndexVectBefore[IndexRandBeforeTau] = IndexVectBefore.back();
+      if (IndexRandBeforeTau < (indexSpheresBefore.size() - 1 )) {
+        indexSpheresBefore[IndexRandBeforeTau] = indexSpheresBefore.back();
       }
-      IndexVectBefore.pop_back();
+      indexSpheresBefore.pop_back();
     }
-    RealNbExclus = 1;
   }
 }
-
+//----------------------------------------------------------------------------//

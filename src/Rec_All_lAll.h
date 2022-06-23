@@ -2,36 +2,53 @@
 #define REC_ALL_LALL_H
 
 #include "pRectangle.h"
-#include "Cost.h"
 #include <vector>
 #include <list>
 #include <iterator>
 #include <stdio.h>
 
+/*+++
+ Class Rec_All_lAll
+ -------------------------------------------------------------------------------
+ Description:
+ Rectangular approximation (Zone = AI(all) + AE(all))
+
+ Parameters:
+ "p" - dimension;
+ "tau" - change-point candidate;
+ "csY" - cumsum of data;
+ "csY2" - cumsum data^2;
+ "locCosts" - min value of costs
+ "rectangle" - approximation zone
+ "spheresBefore" - exclusion set;
+ "flCreate" - indicator, if "true" => new change-point candidate => create exclusion set;
+ -------------------------------------------------------------------------------
+ */
+
 class Rec_All_lAll {
 private:
-  unsigned int Dim;
-  unsigned int Tau;
-  pRectangle* Rect;
-  double** CumSumData;
-  double** CumSumData2;
-  double* VectOfCosts;
-  std::list<pSphere> DiskListBefore;
-  bool CreationFl;
+  unsigned int p;
+  unsigned int tau;
+  pRectangle* rectangle;
+  double** csY;
+  double** csY2;
+  double* locCosts;
+  std::list<pSphere> spheresBefore;
+  bool flCreate;
 
 public:
-  Rec_All_lAll(): Dim(0), Tau(0), Rect(0), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) {}
-  Rec_All_lAll(unsigned  int dim): Dim(dim), Tau(0), Rect(new pRectangle(dim)),  CumSumData(NULL),CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) {}
-  Rec_All_lAll(unsigned int dim, unsigned int t): Dim(dim), Tau(t), Rect(new pRectangle(dim)), CumSumData(NULL), CumSumData2(NULL), VectOfCosts(NULL), CreationFl(true) {}
+  Rec_All_lAll(): p(0), tau(0), rectangle(0), csY(NULL), csY2(NULL), locCosts(NULL), flCreate(true) {}
+  Rec_All_lAll(unsigned  int dim): p(dim), tau(0), rectangle(new pRectangle(dim)),  csY(NULL),csY2(NULL), locCosts(NULL), flCreate(true) {}
+  Rec_All_lAll(unsigned int dim, unsigned int t): p(dim), tau(t), rectangle(new pRectangle(dim)), csY(NULL), csY2(NULL), locCosts(NULL), flCreate(true) {}
   Rec_All_lAll(const Rec_All_lAll & candidate);
   ~Rec_All_lAll();
 
-  double Dist(double* a, double*b);
-  std::list<pSphere> GetDiskListBefore() const;
-  unsigned int GetTau()const;
-  void CleanOfCandidate();
+  unsigned int get_tau()const;
+  std::list<pSphere> get_spheresBefore() const;
+
+  double get_dist(double* pnt1, double* pnt2);
   bool EmptyOfCandidate();
-  void InitialOfCandidate(unsigned int tau, double** &cumsumdata, double** &cumsumdata2, double* &vectofcosts);
+  void idCandidate(unsigned int dim, unsigned int t, double** &csy, double** &csy2, double* &loccosts);
   void UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Rec_All_lAll>::iterator> &vectlinktocands, unsigned int& RealNbExclus);
 };
 #endif //REC_ALL_LALL_H
