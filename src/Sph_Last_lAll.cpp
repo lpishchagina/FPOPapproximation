@@ -44,27 +44,34 @@ void Sph_Last_lAll::idCandidate(unsigned  int dim, unsigned int t, double** &csy
   spheresBefore.clear();
 }
 
+//----------------------------------------------------------------------------//
 void Sph_Last_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::vector<std::list<Sph_Last_lAll>::iterator> &vectlinktocands, unsigned int& RealNbExclus) {
+  std::list<unsigned int> spheresAfter;
   std::list<pSphere>::iterator iter;
+  typename std::list<unsigned int>::reverse_iterator riter;
+
   pSphere sphere = pSphere(p);
-  pSphere testSphere = pSphere(p);
-  //exclusion set
-  if (flCreate) { //flCreate = true =>1 iteration : Creation of spheresBefore
+  pSphere sphereTest = pSphere(p);
+  //flCreate = true =>1 iteration : Creation of sphereListBefore
+  //exclusion spheres
+  if (flCreate) {
     flCreate = false;
     if (IndexToLinkOfUpdCand > 0) {
       for (unsigned int i = 0; i < IndexToLinkOfUpdCand; i++) {
-        testSphere.createSphere(p, vectlinktocands[i] -> get_tau(), tau-1, csY, csY2, locCosts);
-        spheresBefore.push_back(testSphere);
+        sphere.createSphere(p, vectlinktocands[i] -> get_tau(), tau-1, csY, csY2, locCosts);
+        if (sphere.get_r() == 0) { fl_empty = true; return;}
+        spheresBefore.push_back(sphere);
       }
     }
   }
+  //intersection spheres
+  for (unsigned int i = IndexToLinkOfUpdCand; i < vectlinktocands.size(); i++) {
+    spheresAfter.push_back(vectlinktocands[i] -> get_tau());
+  }
   sphere.createSphere(p, tau, vectlinktocands[vectlinktocands.size() - 1] -> get_tau(), csY, csY2, locCosts);
-  if (sphere.get_r() == 0) {
-    fl_empty = true;
-    return;
-  }//pelt
+  if (sphere.get_r() == 0) { fl_empty = true; return; }
   //spheres (check exclusion)
-  if (spheresBefore.size() > 0)   {
+  if (spheresBefore.size() > 0) {
     iter = spheresBefore.begin();
     while (iter != spheresBefore.end()) {
       if (sphere.isInclusion(*iter)) {
@@ -78,13 +85,17 @@ void Sph_Last_lAll::UpdateOfCandidate(unsigned int IndexToLinkOfUpdCand, std::ve
     }
   }
   //spheres (check intersection)
-  unsigned int end = vectlinktocands.size() - 1;
-  for (int i = IndexToLinkOfUpdCand; i < end; i++) {
-      testSphere.createSphere(p, tau, vectlinktocands[i] -> get_tau(), csY, csY2, locCosts);
-      if ((testSphere.get_r()  == 0) || (sphere.isnotIntersection(testSphere))) {
-        rectangle -> DoEmptyRect();
-        return;
+  if (spheresAfter.size() > 1) {
+    riter = spheresAfter.rbegin();
+    iter++;
+    while (riter != (spheresAfter.rend())) {
+      sphereTest.createSphere(p, tau, (*riter), csY, csY2, locCosts);
+      if (sphereTest.get_r() == 0) { fl_empty = true; return; }
+      if (sphere.isnotIntersection(sphereTest)) {
+        fl_empty = true; return;
+      } else {
+        ++riter;
       }
+    }
   }
 }
-//----------------------------------------------------------------------------//
